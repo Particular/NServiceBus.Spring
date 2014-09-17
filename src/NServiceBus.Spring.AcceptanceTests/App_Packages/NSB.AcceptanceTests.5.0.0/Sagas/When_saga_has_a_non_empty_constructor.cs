@@ -12,7 +12,6 @@
         static Guid IdThatSagaIsCorrelatedOn = Guid.NewGuid();
 
         [Test]
-        [Ignore("Mixed constructor and property injection not supported in Spring")]
         public void Should_hydrate_and_invoke_the_existing_instance()
         {
             Scenario.Define<Context>()

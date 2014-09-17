@@ -51,6 +51,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NServiceBus.Spring\NServiceBus.Spring.csproj">
+      <Project>{734d30cf-4376-488a-a6b4-1033fed93660}</Project>
+      <Name>NServiceBus.Spring</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="App_Packages\NSB.AcceptanceTests.5.0.0\Audit\When_a_message_is_audited.cs" />
     <Compile Include="App_Packages\NSB.AcceptanceTests.5.0.0\Audit\When_using_auditing_as_a_feature.cs" />
     <Compile Include="App_Packages\NSB.AcceptanceTests.5.0.0\Audit\When_using_audit_message_is_received.cs" />
@@ -158,15 +167,6 @@
     <Compile Include="App_Packages\NSB.AcceptanceTests.5.0.0\Tx\When_sending_within_an_ambient_transaction.cs" />
     <Compile Include="App_Packages\NSB.AcceptanceTests.5.0.0\Versioning\When_multiple_versions_of_a_message_is_published.cs" />
     <Compile Include="App_Packages\NSB.AcceptanceTests.5.0.0\Volatile\When_sending_to_non_durable_endpoint.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NServiceBus.Spring\NServiceBus.Spring.csproj">
-      <Project>{734d30cf-4376-488a-a6b4-1033fed93660}</Project>
-      <Name>NServiceBus.Spring</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

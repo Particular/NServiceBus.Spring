@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NServiceBus.Spring", "NServiceBus.Spring\NServiceBus.Spring.csproj", "{734D30CF-4376-488A-A6B4-1033FED93660}"
 EndProject
@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NServiceBus.Spring.AcceptanceTests", "NServiceBus.Spring.AcceptanceTests\NServiceBus.Spring.AcceptanceTests.csproj", "{0D0BB553-A7F5-4818-904C-327379B01023}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NServiceBus.Spring.Tests", "NServiceBus.Spring.Tests\NServiceBus.Spring.Tests.csproj", "{BA7E959D-D85D-4C9D-9D66-F39A33F516AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{0D0BB553-A7F5-4818-904C-327379B01023}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D0BB553-A7F5-4818-904C-327379B01023}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D0BB553-A7F5-4818-904C-327379B01023}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA7E959D-D85D-4C9D-9D66-F39A33F516AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA7E959D-D85D-4C9D-9D66-F39A33F516AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA7E959D-D85D-4C9D-9D66-F39A33F516AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA7E959D-D85D-4C9D-9D66-F39A33F516AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

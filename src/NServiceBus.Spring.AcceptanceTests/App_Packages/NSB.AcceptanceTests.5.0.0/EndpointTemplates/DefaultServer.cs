@@ -8,6 +8,7 @@
     using Hosting.Helpers;
     using Logging;
     using NServiceBus;
+    using NServiceBus.AcceptanceTesting;
     using NServiceBus.Config.ConfigurationSource;
     using NServiceBus.Configuration.AdvanceExtensibility;
 
@@ -46,7 +47,7 @@
             builder.RegisterComponents(r =>
             {
                 r.RegisterSingleton(runDescriptor.ScenarioContext.GetType(), runDescriptor.ScenarioContext);
-               // r.RegisterSingleton(typeof(ScenarioContext), runDescriptor.ScenarioContext);
+                r.RegisterSingleton(typeof(ScenarioContext), runDescriptor.ScenarioContext);
             });
 
        

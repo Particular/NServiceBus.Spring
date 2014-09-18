@@ -35,7 +35,7 @@ namespace NServiceBus.ContainerTests
         }
 
         [Test]
-        [Ignore("Not supported by spring")]
+        [Ignore("Not supported in Spring")]
         public void A_registration_should_be_allowed_to_be_updated()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())
@@ -76,7 +76,7 @@ namespace NServiceBus.ContainerTests
         }
 
         [Test]
-        [Ignore("Not supported by spring")]
+        [Ignore("Not supported in Spring")]
         public void Registering_the_same_singleton_for_different_interfaces_should_be_supported()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())
@@ -197,7 +197,7 @@ namespace NServiceBus.ContainerTests
         }
 
         [Test]
-        [Ignore("Not supported by spring")]
+        [Ignore("Not supported in Spring")]
         public void All_implemented_interfaces_should_be_registered_for_func()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())

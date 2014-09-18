@@ -45,11 +45,13 @@
             {
 
                 // ReSharper disable once UnusedParameter.Local
-                public TestSaga(IBus bus)
+                public TestSaga(IBus bus, Context context)
                 {
-                    
+                    this.context = context;
                 }
-                public Context Context { get; set; }
+
+                Context context;
+
                 public void Handle(StartSagaMessage message)
                 {
                     Data.SomeId = message.SomeId;
@@ -63,7 +65,7 @@
 
                 public void Handle(OtherMessage message)
                 {
-                    Context.SecondMessageReceived = true;
+                    context.SecondMessageReceived = true;
                 }
             }
 

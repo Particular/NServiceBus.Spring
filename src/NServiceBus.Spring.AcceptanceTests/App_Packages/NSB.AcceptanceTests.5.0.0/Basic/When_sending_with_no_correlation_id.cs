@@ -14,7 +14,7 @@
             var context = new Context();
 
             Scenario.Define(context)
-                    .WithEndpoint<CorrelationEndpoint>(b => b.Given(bus => bus.SendLocal(new MyRequest())))
+                    .WithEndpoint<MyEndpoint>(b => b.Given(bus => bus.SendLocal(new MyRequest())))
                     .Done(c => c.GotRequest)
                     .Run();
 
@@ -28,9 +28,9 @@
             public string CorrelationIdReceived { get; set; }
         }
 
-        public class CorrelationEndpoint : EndpointConfigurationBuilder
+        public class MyEndpoint : EndpointConfigurationBuilder
         {
-            public CorrelationEndpoint()
+            public MyEndpoint()
             {
                 EndpointSetup<DefaultServer>();
             }

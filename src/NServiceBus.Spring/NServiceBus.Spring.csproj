@@ -82,6 +82,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\packaging\nuget\NServiceBus.ObjectBuilder.Spring.nuspec">
+      <Link>NServiceBus.ObjectBuilder.Spring.nuspec</Link>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

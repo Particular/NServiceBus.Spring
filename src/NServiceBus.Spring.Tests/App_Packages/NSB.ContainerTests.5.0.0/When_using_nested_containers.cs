@@ -11,7 +11,6 @@ namespace NServiceBus.ContainerTests
     {
 
         [Test]
-        [Ignore("Not supported in Spring")]
         public void Instance_per_uow__components_should_be_disposed_when_the_child_container_is_disposed()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())
@@ -22,11 +21,9 @@ namespace NServiceBus.ContainerTests
                     nestedContainer.Build(typeof(InstancePerUoWComponent));
                 Assert.True(InstancePerUoWComponent.DisposeCalled);
             }
-            //Not supported bytypeof(SpringObjectBuilder));
         }
 
         [Test]
-        [Ignore("Not supported in Spring")]
         public void Instance_per_uow__components_should_not_be_shared_across_child_containers()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())
@@ -50,9 +47,6 @@ namespace NServiceBus.ContainerTests
                 });
                 Assert.AreNotSame(task1.Result, task2.Result);
             }
-
-
-            //Not supported bytypeof(SpringObjectBuilder));
         }
 
         [Test]
@@ -114,7 +108,6 @@ namespace NServiceBus.ContainerTests
         }
 
         [Test]
-        [Ignore("Not supported in Spring")]
         public void UoW_components_in_the_parent_container_should_be_singletons_in_the_child_container()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())
@@ -126,7 +119,6 @@ namespace NServiceBus.ContainerTests
                     Assert.AreSame(nestedContainer.Build(typeof(InstancePerUoWComponent)), nestedContainer.Build(typeof(InstancePerUoWComponent)), "UoW's should be singleton in child container");
                 }
             }
-            //Not supported bytypeof(SpringObjectBuilder));
         }
 
         [Test]
@@ -164,7 +156,6 @@ namespace NServiceBus.ContainerTests
                 }
                 Assert.False(SingletonComponent.DisposeCalled);
             }
-            //Not supported by typeof(SpringObjectBuilder));
         }
 
         class SingletonComponent : ISingletonComponent, IDisposable

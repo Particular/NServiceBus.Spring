@@ -36,7 +36,6 @@ namespace NServiceBus.ContainerTests
         }
 
         [Test]
-        [Ignore("Not supported in Spring")]
         public void Should_dispose_all_IDisposable_components_in_child_container()
         {
             using (var main = TestContainerBuilder.ConstructBuilder())

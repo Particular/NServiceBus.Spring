@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
     using Common;
     using global::Spring.Context.Support;
     using global::Spring.Objects.Factory.Config;
@@ -12,6 +14,7 @@
     /// </summary>
     class SpringObjectBuilder : IContainer
     {
+        int intializedSignaled;
         GenericApplicationContext context;
         bool isChildContainer;
         Dictionary<Type, DependencyLifecycle> typeHandleLookup = new Dictionary<Type, DependencyLifecycle>();
@@ -22,7 +25,8 @@
         /// <summary>
         /// Instantiates the builder using a new <see cref="GenericApplicationContext"/>.
         /// </summary>
-        public SpringObjectBuilder() : this(new GenericApplicationContext())
+        public SpringObjectBuilder()
+            : this(new GenericApplicationContext())
         {
         }
 
@@ -41,12 +45,6 @@
 
         void DisposeManaged()
         {
-            //This is to figure out if Dispose was called from a child container or not
-            if (isChildContainer)
-            {
-                return;
-            }
-
             if (context != null)
             {
                 context.Dispose();
@@ -56,10 +54,15 @@
         public IContainer BuildChildContainer()
         {
             Init();
-            return new SpringObjectBuilder(context)
+
+            var childContext = new GenericApplicationContext(context)
+            {
+                Name = string.Format("child_of_{0}", context.Name)
+            };
+
+            return new SpringObjectBuilder(childContext)
                    {
                        isChildContainer = true,
-                       initialized = true,
                        typeHandleLookup = typeHandleLookup,
                        componentProperties = componentProperties,
                        factory = factory
@@ -77,7 +80,20 @@
             {
                 return de.Current.Value;
             }
-            
+
+            var parentContext = context.ParentContext;
+            if (parentContext != null)
+            {
+                dict = parentContext.GetObjectsOfType(typeToBuild, true, false);
+
+                de = dict.GetEnumerator();
+
+                if (de.MoveNext())
+                {
+                    return de.Current.Value;
+                }
+            }
+
             throw new ArgumentException(string.Format("{0} has not been configured. In order to avoid this exception, check the return value of the 'HasComponent' method for this type.", typeToBuild));
         }
 
@@ -117,7 +133,7 @@
             }
 
             var funcFactory = new ArbitraryFuncDelegatingFactoryObject<T>(componentFactory, dependencyLifecycle == DependencyLifecycle.SingleInstance);
-            
+
             context.ObjectFactory.RegisterSingleton(componentType.FullName, funcFactory);
         }
 
@@ -180,28 +196,60 @@
 
         void Init()
         {
-            if (initialized)
+            if (Interlocked.Exchange(ref intializedSignaled, 1) != 0)
             {
                 return;
             }
 
-            lock (componentProperties)
+            if (!isChildContainer)
             {
-                foreach (var t in componentProperties.Keys)
-                {
-                    var builder = ObjectDefinitionBuilder.RootObjectDefinition(factory, t)
-                        .SetAutowireMode(AutoWiringMode.AutoDetect)
-                        .SetSingleton(typeHandleLookup[t] == DependencyLifecycle.SingleInstance);                    
-
-                    componentProperties[t].Configure(builder);
-
-                    IObjectDefinition def = builder.ObjectDefinition;
-                    context.RegisterObjectDefinition(t.FullName, def);
-                }
+                WireUpRootContainer();
             }
-
+            else
+            {
+                WireUpChildContainer();
+            }
+            
             initialized = true;
             context.Refresh();
+        }
+
+        void WireUpRootContainer()
+        {
+            var componentConfigs = new Dictionary<Type, ComponentConfig>(componentProperties);
+            foreach (var t in componentConfigs.Keys)
+            {
+                var builder = ObjectDefinitionBuilder.RootObjectDefinition(factory, t)
+                    .SetAutowireMode(AutoWiringMode.AutoDetect)
+                    .SetSingleton(typeHandleLookup[t] == DependencyLifecycle.SingleInstance);
+
+                componentConfigs[t].Configure(builder);
+
+                IObjectDefinition def = builder.ObjectDefinition;
+                context.RegisterObjectDefinition(t.FullName, def);
+            }
+        }
+
+        void WireUpChildContainer()
+        {
+            var componentConfigs = new Dictionary<Type, ComponentConfig>(componentProperties);
+            foreach (var t in componentConfigs.Keys)
+            {
+                var lifeCycle = typeHandleLookup[t];
+                if (lifeCycle != DependencyLifecycle.InstancePerUnitOfWork)
+                {
+                    continue;
+                }
+
+                var builder = ObjectDefinitionBuilder.RootObjectDefinition(factory, t)
+                    .SetAutowireMode(AutoWiringMode.AutoDetect)
+                    .SetSingleton(true);
+
+                componentConfigs[t].Configure(builder);
+
+                IObjectDefinition def = builder.ObjectDefinition;
+                context.RegisterObjectDefinition(t.FullName, def);
+            }
         }
 
         void ThrowIfAlreadyInitialized()

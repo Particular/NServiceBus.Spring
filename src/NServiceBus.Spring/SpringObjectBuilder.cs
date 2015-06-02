@@ -95,10 +95,7 @@
 
         public void Configure(Type concreteComponent, DependencyLifecycle dependencyLifecycle)
         {
-            if (initialized)
-            {
-                throw new InvalidOperationException("You can't alter the registrations after the container components has been resolved from the container");
-            }
+            ThrowIfAlreadyInitialized();
 
             typeHandleLookup[concreteComponent] = dependencyLifecycle;
 
@@ -113,6 +110,8 @@
 
         public void Configure<T>(Func<T> componentFactory, DependencyLifecycle dependencyLifecycle)
         {
+            ThrowIfAlreadyInitialized();
+
             var componentType = typeof(T);
 
             if (HasComponent(componentType))
@@ -127,10 +126,7 @@
 
         public void ConfigureProperty(Type concreteComponent, string property, object value)
         {
-            if (initialized)
-            {
-                throw new InvalidOperationException("You can't alter the registrations after the container components has been resolved from the container");
-            }
+            ThrowIfAlreadyInitialized();
 
             lock (componentProperties)
             {
@@ -148,10 +144,7 @@
 
         public void RegisterSingleton(Type lookupType, object instance)
         {
-            if (initialized)
-            {
-                throw new InvalidOperationException("You can't alter the registrations after the container components has been resolved from the container");
-            }
+            ThrowIfAlreadyInitialized();
 
             context.ObjectFactory.RegisterSingleton(lookupType.FullName, instance);
         }
@@ -214,5 +207,12 @@
             context.Refresh();
         }
 
+        void ThrowIfAlreadyInitialized()
+        {
+            if (initialized)
+            {
+                throw new InvalidOperationException("You can't alter the registrations after the container components has been resolved from the container");
+            }
+        }
     }
 }

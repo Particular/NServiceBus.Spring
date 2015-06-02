@@ -99,12 +99,9 @@
 
             typeHandleLookup[concreteComponent] = dependencyLifecycle;
 
-            lock (componentProperties)
+            if (!componentProperties.ContainsKey(concreteComponent))
             {
-                if (!componentProperties.ContainsKey(concreteComponent))
-                {
-                    componentProperties[concreteComponent] = new ComponentConfig();
-                }
+                componentProperties[concreteComponent] = new ComponentConfig();
             }
         }
 
@@ -128,18 +125,16 @@
         {
             ThrowIfAlreadyInitialized();
 
-            lock (componentProperties)
+            var componentConfig = new Dictionary<Type, ComponentConfig>(componentProperties);
+            ComponentConfig result;
+            componentConfig.TryGetValue(concreteComponent, out result);
+
+            if (result == null)
             {
-                ComponentConfig result;
-                componentProperties.TryGetValue(concreteComponent, out result);
-
-                if (result == null)
-                {
-                    throw new InvalidOperationException("Cannot configure property before the component has been configured. Please call 'Configure' first.");
-                }
-
-                result.ConfigureProperty(property, value);
+                throw new InvalidOperationException("Cannot configure property before the component has been configured. Please call 'Configure' first.");
             }
+
+            result.ConfigureProperty(property, value);
         }
 
         public void RegisterSingleton(Type lookupType, object instance)
@@ -151,7 +146,9 @@
 
         public bool HasComponent(Type componentType)
         {
-            if (componentProperties.ContainsKey(componentType))
+            var componentConfig = new Dictionary<Type, ComponentConfig>(componentProperties);
+
+            if (componentConfig.ContainsKey(componentType))
             {
                 return true;
             }
@@ -166,7 +163,7 @@
                 return true;
             }
 
-            foreach (var component in componentProperties.Keys)
+            foreach (var component in componentConfig.Keys)
             {
                 if (componentType.IsAssignableFrom(component))
                 {

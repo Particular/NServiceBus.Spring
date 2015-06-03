@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using System.Threading;
     using Common;
     using global::Spring.Context.Support;
@@ -13,6 +14,7 @@
     /// </summary>
     class SpringObjectBuilder : IContainer
     {
+        Action<string> removeSingleton;
         int intializedSignaled;
         GenericApplicationContext context;
         bool isChildContainer;
@@ -35,6 +37,26 @@
         public SpringObjectBuilder(GenericApplicationContext context)
         {
             this.context = context;
+
+            var abstractObjectFactory = this.context.ObjectFactory as AbstractObjectFactory;
+            if (abstractObjectFactory == null)
+            {
+                throw new InvalidOperationException("The ObjectFactory on the GenericApplicationContext must inherit from AbstractObjectFactory");
+            }
+
+            var removeSingletonMethod = abstractObjectFactory.GetType().GetMethod("RemoveSingleton", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (removeSingletonMethod == null)
+            {
+                throw new InvalidOperationException("The provided ObjectFactory doesn't support removing Singletons");
+            }
+
+            removeSingleton = name =>
+            {
+                removeSingletonMethod.Invoke(context.ObjectFactory, new object[]
+                {
+                    name
+                });
+            };
         }
 
         public void Dispose()
@@ -128,7 +150,7 @@
 
             if (HasComponent(componentType))
             {
-                return;
+                removeSingleton(componentType.FullName);
             }
 
             var funcFactory = new ArbitraryFuncDelegatingFactoryObject<T>(componentFactory, dependencyLifecycle == DependencyLifecycle.SingleInstance);
@@ -155,6 +177,11 @@
         public void RegisterSingleton(Type lookupType, object instance)
         {
             ThrowIfAlreadyInitialized();
+
+            if (HasComponent(lookupType))
+            {
+                removeSingleton(lookupType.FullName);
+            }
 
             context.ObjectFactory.RegisterSingleton(lookupType.FullName, instance);
         }

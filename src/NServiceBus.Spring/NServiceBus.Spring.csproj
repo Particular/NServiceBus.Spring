@@ -75,11 +75,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArbitraryFuncDelegatingFactoryObject.cs" />
+    <Compile Include="ChildContainerTypeRegistration.cs" />
     <Compile Include="ComponentConfig.cs" />
+    <Compile Include="ComponentFactoryRegistration.cs" />
+    <Compile Include="RegisterAction.cs" />
+    <Compile Include="RootContainerTypeRegistration.cs" />
+    <Compile Include="SingletonRegistration.cs" />
     <Compile Include="SpringBuilder.cs" />
     <Compile Include="SpringExtensions.cs" />
     <Compile Include="SpringObjectBuilder.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="TypeRegistration.cs" />
+    <Compile Include="TypeRegistrationDecorator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml">

@@ -2,23 +2,21 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Reflection;
+    using System.Linq;
     using System.Threading;
-    using Common;
     using global::Spring.Context.Support;
-    using global::Spring.Objects.Factory.Config;
     using global::Spring.Objects.Factory.Support;
+    using NServiceBus.ObjectBuilder.Common;
 
     /// <summary>
     /// Implementation of <see cref="IContainer"/> using the Spring Framework container
     /// </summary>
     class SpringObjectBuilder : IContainer
     {
-        Action<string> removeSingleton;
         int intializedSignaled;
         GenericApplicationContext context;
         bool isChildContainer;
-        Dictionary<Type, DependencyLifecycle> typeHandleLookup = new Dictionary<Type, DependencyLifecycle>();
+        Dictionary<Type, RegisterAction> registrations = new Dictionary<Type, RegisterAction>();
         Dictionary<Type, ComponentConfig> componentProperties = new Dictionary<Type, ComponentConfig>();
         bool initialized;
         DefaultObjectDefinitionFactory factory = new DefaultObjectDefinitionFactory();
@@ -37,26 +35,6 @@
         public SpringObjectBuilder(GenericApplicationContext context)
         {
             this.context = context;
-
-            var abstractObjectFactory = this.context.ObjectFactory as AbstractObjectFactory;
-            if (abstractObjectFactory == null)
-            {
-                throw new InvalidOperationException("The ObjectFactory on the GenericApplicationContext must inherit from AbstractObjectFactory");
-            }
-
-            var removeSingletonMethod = abstractObjectFactory.GetType().GetMethod("RemoveSingleton", BindingFlags.NonPublic | BindingFlags.Instance);
-            if (removeSingletonMethod == null)
-            {
-                throw new InvalidOperationException("The provided ObjectFactory doesn't support removing Singletons");
-            }
-
-            removeSingleton = name =>
-            {
-                removeSingletonMethod.Invoke(context.ObjectFactory, new object[]
-                {
-                    name
-                });
-            };
         }
 
         public void Dispose()
@@ -84,8 +62,8 @@
             return new SpringObjectBuilder(childContext)
                    {
                        isChildContainer = true,
-                       typeHandleLookup = typeHandleLookup,
                        componentProperties = componentProperties,
+                       registrations = registrations,
                        factory = factory
                    };
         }
@@ -134,12 +112,12 @@
         {
             ThrowIfAlreadyInitialized();
 
-            typeHandleLookup[concreteComponent] = dependencyLifecycle;
-
             if (!componentProperties.ContainsKey(concreteComponent))
             {
                 componentProperties[concreteComponent] = new ComponentConfig();
             }
+
+            registrations[concreteComponent] = new TypeRegistrationDecorator(concreteComponent, componentProperties[concreteComponent], dependencyLifecycle, factory);
         }
 
         public void Configure<T>(Func<T> componentFactory, DependencyLifecycle dependencyLifecycle)
@@ -147,15 +125,7 @@
             ThrowIfAlreadyInitialized();
 
             var componentType = typeof(T);
-
-            if (HasComponent(componentType))
-            {
-                removeSingleton(componentType.FullName);
-            }
-
-            var funcFactory = new ArbitraryFuncDelegatingFactoryObject<T>(componentFactory, dependencyLifecycle == DependencyLifecycle.SingleInstance);
-
-            context.ObjectFactory.RegisterSingleton(componentType.FullName, funcFactory);
+            registrations[componentType] = new ComponentFactoryRegistration<T>(componentFactory, dependencyLifecycle);
         }
 
         public void ConfigureProperty(Type concreteComponent, string property, object value)
@@ -178,42 +148,14 @@
         {
             ThrowIfAlreadyInitialized();
 
-            if (HasComponent(lookupType))
-            {
-                removeSingleton(lookupType.FullName);
-            }
-
-            context.ObjectFactory.RegisterSingleton(lookupType.FullName, instance);
+            registrations[lookupType] = new SingletonRegistration(lookupType, instance);
         }
 
         public bool HasComponent(Type componentType)
         {
-            var componentConfig = new Dictionary<Type, ComponentConfig>(componentProperties);
+            var registeredTypes = new List<Type>(registrations.Keys);
 
-            if (componentConfig.ContainsKey(componentType))
-            {
-                return true;
-            }
-
-            if (context.ObjectFactory.ContainsObjectDefinition(componentType.FullName))
-            {
-                return true;
-            }
-
-            if (context.ObjectFactory.ContainsSingleton(componentType.FullName))
-            {
-                return true;
-            }
-
-            foreach (var component in componentConfig.Keys)
-            {
-                if (componentType.IsAssignableFrom(component))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return registeredTypes.Any(componentType.IsAssignableFrom);
         }
 
         public void Release(object instance)
@@ -227,55 +169,14 @@
                 return;
             }
 
-            if (!isChildContainer)
+            var isApplicableForChildContainerWhenChildContainerIsInitialized = isChildContainer ? (Func<RegisterAction, bool>) (r => r.ApplicableForChildContainer) : (r => true);
+            foreach (var action in new List<RegisterAction>(registrations.Values.Where(isApplicableForChildContainerWhenChildContainerIsInitialized)))
             {
-                WireUpRootContainer();
+                action.Register(context);
             }
-            else
-            {
-                WireUpChildContainer();
-            }
-            
+
             initialized = true;
             context.Refresh();
-        }
-
-        void WireUpRootContainer()
-        {
-            var componentConfigs = new Dictionary<Type, ComponentConfig>(componentProperties);
-            foreach (var t in componentConfigs.Keys)
-            {
-                var builder = ObjectDefinitionBuilder.RootObjectDefinition(factory, t)
-                    .SetAutowireMode(AutoWiringMode.AutoDetect)
-                    .SetSingleton(typeHandleLookup[t] == DependencyLifecycle.SingleInstance);
-
-                componentConfigs[t].Configure(builder);
-
-                IObjectDefinition def = builder.ObjectDefinition;
-                context.RegisterObjectDefinition(t.FullName, def);
-            }
-        }
-
-        void WireUpChildContainer()
-        {
-            var componentConfigs = new Dictionary<Type, ComponentConfig>(componentProperties);
-            foreach (var t in componentConfigs.Keys)
-            {
-                var lifeCycle = typeHandleLookup[t];
-                if (lifeCycle != DependencyLifecycle.InstancePerUnitOfWork)
-                {
-                    continue;
-                }
-
-                var builder = ObjectDefinitionBuilder.RootObjectDefinition(factory, t)
-                    .SetAutowireMode(AutoWiringMode.AutoDetect)
-                    .SetSingleton(true);
-
-                componentConfigs[t].Configure(builder);
-
-                IObjectDefinition def = builder.ObjectDefinition;
-                context.RegisterObjectDefinition(t.FullName, def);
-            }
         }
 
         void ThrowIfAlreadyInitialized()

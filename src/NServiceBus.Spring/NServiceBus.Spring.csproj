@@ -86,7 +86,7 @@
     <Compile Include="SpringObjectBuilder.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="TypeRegistration.cs" />
-    <Compile Include="TypeRegistrationDecorator.cs" />
+    <Compile Include="TypeRegistrationProxy.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml">

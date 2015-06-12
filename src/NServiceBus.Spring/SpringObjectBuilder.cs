@@ -117,7 +117,7 @@
                 componentProperties[concreteComponent] = new ComponentConfig();
             }
 
-            registrations[concreteComponent] = new TypeRegistrationDecorator(concreteComponent, componentProperties[concreteComponent], dependencyLifecycle, factory);
+            registrations[concreteComponent] = new TypeRegistrationProxy(concreteComponent, componentProperties[concreteComponent], dependencyLifecycle, factory);
         }
 
         public void Configure<T>(Func<T> componentFactory, DependencyLifecycle dependencyLifecycle)

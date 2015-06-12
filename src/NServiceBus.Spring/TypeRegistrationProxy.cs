@@ -4,14 +4,14 @@
     using global::Spring.Context.Support;
     using global::Spring.Objects.Factory.Support;
 
-    class TypeRegistrationDecorator : RegisterAction
+    class TypeRegistrationProxy : RegisterAction
     {
         readonly DependencyLifecycle dependencyLifecycle;
         readonly Type componentType;
         readonly ComponentConfig componentConfig;
         readonly IObjectDefinitionFactory definitionFactory;
 
-        public TypeRegistrationDecorator(Type componentType, ComponentConfig componentConfig, DependencyLifecycle dependencyLifecycle, IObjectDefinitionFactory definitionFactory)
+        public TypeRegistrationProxy(Type componentType, ComponentConfig componentConfig, DependencyLifecycle dependencyLifecycle, IObjectDefinitionFactory definitionFactory)
         {
             this.definitionFactory = definitionFactory;
             this.componentConfig = componentConfig;

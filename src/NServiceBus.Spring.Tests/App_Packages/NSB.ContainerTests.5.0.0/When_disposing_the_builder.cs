@@ -36,7 +36,6 @@ namespace NServiceBus.ContainerTests
         }
 
         [Test]
-        [Ignore("Not supported in Spring")]
         public void Should_dispose_all_IDisposable_components_in_child_container()
         {
             using (var main = TestContainerBuilder.ConstructBuilder())
@@ -54,8 +53,6 @@ namespace NServiceBus.ContainerTests
                 Assert.False(AnotherSingletonComponent.DisposeCalled, "Dispose should not be called on AnotherSingletonComponent because it belongs to main container");
                 Assert.True(DisposableComponent.DisposeCalled, "Dispose should be called on DisposableComponent");
             }
-
-            //Not supported by, typeof(SpringObjectBuilder));
         }
 
         public class DisposableComponent : IDisposable

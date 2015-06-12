@@ -35,7 +35,6 @@ namespace NServiceBus.ContainerTests
         }
 
         [Test]
-        [Ignore("Not supported in Spring")]
         public void A_registration_should_be_allowed_to_be_updated()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())
@@ -45,8 +44,18 @@ namespace NServiceBus.ContainerTests
 
                 Assert.IsInstanceOf<AnotherSingletonComponent>(builder.Build(typeof(ISingletonComponent)));
             }
+        }
 
-            //Not supported by, typeof(SpringObjectBuilder));
+        [Test]
+        public void A_registration_should_be_allowed_to_be_updated_for_func_factories()
+        {
+            using (var builder = TestContainerBuilder.ConstructBuilder())
+            {
+                builder.Configure<ISingletonComponent>(() => new SingletonComponent(), DependencyLifecycle.SingleInstance);
+                builder.Configure<ISingletonComponent>(() => new AnotherSingletonComponent(), DependencyLifecycle.SingleInstance);
+
+                Assert.IsInstanceOf<AnotherSingletonComponent>(builder.Build(typeof(ISingletonComponent)));
+            }
         }
 
         [Test]
@@ -197,7 +206,6 @@ namespace NServiceBus.ContainerTests
         }
 
         [Test]
-        [Ignore("Not supported in Spring")]
         public void All_implemented_interfaces_should_be_registered_for_func()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())
@@ -209,8 +217,6 @@ namespace NServiceBus.ContainerTests
                 Assert.True(builder.HasComponent(typeof(IYetAnotherInterface)));
                 Assert.AreEqual(1, builder.BuildAll(typeof(IYetAnotherInterface)).Count());
             }
-
-            //Not supported bytypeof(SpringObjectBuilder));
         }
 
         [Test]

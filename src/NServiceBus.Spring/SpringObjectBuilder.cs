@@ -169,14 +169,18 @@
                 return;
             }
 
-            var isApplicableForChildContainerWhenChildContainerIsInitialized = isChildContainer ? (Func<RegisterAction, bool>) (r => r.ApplicableForChildContainer) : (r => true);
-            foreach (var action in new List<RegisterAction>(registrations.Values.Where(isApplicableForChildContainerWhenChildContainerIsInitialized)))
+            foreach (var action in new List<RegisterAction>(registrations.Values.Where(r => IsRootContainer || r.ApplicableForChildContainer)))
             {
                 action.Register(context);
             }
 
             initialized = true;
             context.Refresh();
+        }
+
+        bool IsRootContainer
+        {
+            get { return !isChildContainer; }
         }
 
         void ThrowIfAlreadyInitialized()

@@ -1,14 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NServiceBus.Spring", "NServiceBus.Spring\NServiceBus.Spring.csproj", "{734D30CF-4376-488A-A6B4-1033FED93660}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{CFE2AD27-8175-4584-8952-5CF41FC83882}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\packages.config = .nuget\packages.config
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NServiceBus.Spring.AcceptanceTests", "NServiceBus.Spring.AcceptanceTests\NServiceBus.Spring.AcceptanceTests.csproj", "{0D0BB553-A7F5-4818-904C-327379B01023}"
 EndProject

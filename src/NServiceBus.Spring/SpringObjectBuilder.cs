@@ -2,19 +2,21 @@
 {
     using System;
     using System.Collections.Generic;
-    using Common;
+    using System.Linq;
+    using System.Threading;
     using global::Spring.Context.Support;
-    using global::Spring.Objects.Factory.Config;
     using global::Spring.Objects.Factory.Support;
+    using NServiceBus.ObjectBuilder.Common;
 
     /// <summary>
     /// Implementation of <see cref="IContainer"/> using the Spring Framework container
     /// </summary>
     class SpringObjectBuilder : IContainer
     {
+        int intializedSignaled;
         GenericApplicationContext context;
         bool isChildContainer;
-        Dictionary<Type, DependencyLifecycle> typeHandleLookup = new Dictionary<Type, DependencyLifecycle>();
+        Dictionary<Type, RegisterAction> registrations = new Dictionary<Type, RegisterAction>();
         Dictionary<Type, ComponentConfig> componentProperties = new Dictionary<Type, ComponentConfig>();
         bool initialized;
         DefaultObjectDefinitionFactory factory = new DefaultObjectDefinitionFactory();
@@ -22,7 +24,8 @@
         /// <summary>
         /// Instantiates the builder using a new <see cref="GenericApplicationContext"/>.
         /// </summary>
-        public SpringObjectBuilder() : this(new GenericApplicationContext())
+        public SpringObjectBuilder()
+            : this(new GenericApplicationContext())
         {
         }
 
@@ -41,12 +44,6 @@
 
         void DisposeManaged()
         {
-            //This is to figure out if Dispose was called from a child container or not
-            if (isChildContainer)
-            {
-                return;
-            }
-
             if (context != null)
             {
                 context.Dispose();
@@ -56,12 +53,17 @@
         public IContainer BuildChildContainer()
         {
             Init();
-            return new SpringObjectBuilder(context)
+
+            var childContext = new GenericApplicationContext(context)
+            {
+                Name = string.Format("child_of_{0}", context.Name)
+            };
+
+            return new SpringObjectBuilder(childContext)
                    {
                        isChildContainer = true,
-                       initialized = true,
-                       typeHandleLookup = typeHandleLookup,
                        componentProperties = componentProperties,
+                       registrations = registrations,
                        factory = factory
                    };
         }
@@ -75,9 +77,22 @@
 
             if (de.MoveNext())
             {
-                return de.Value;
+                return de.Current.Value;
             }
-            
+
+            var parentContext = context.ParentContext;
+            if (parentContext != null)
+            {
+                dict = parentContext.GetObjectsOfType(typeToBuild, true, false);
+
+                de = dict.GetEnumerator();
+
+                if (de.MoveNext())
+                {
+                    return de.Current.Value;
+                }
+            }
+
             throw new ArgumentException(string.Format("{0} has not been configured. In order to avoid this exception, check the return value of the 'HasComponent' method for this type.", typeToBuild));
         }
 
@@ -89,99 +104,58 @@
             var de = dict.GetEnumerator();
             while (de.MoveNext())
             {
-                yield return de.Entry.Value;
+                yield return de.Current.Value;
             }
         }
 
         public void Configure(Type concreteComponent, DependencyLifecycle dependencyLifecycle)
         {
-            if (initialized)
+            ThrowIfAlreadyInitialized();
+
+            if (!componentProperties.ContainsKey(concreteComponent))
             {
-                throw new InvalidOperationException("You can't alter the registrations after the container components has been resolved from the container");
+                componentProperties[concreteComponent] = new ComponentConfig();
             }
 
-            typeHandleLookup[concreteComponent] = dependencyLifecycle;
-
-            lock (componentProperties)
-            {
-                if (!componentProperties.ContainsKey(concreteComponent))
-                {
-                    componentProperties[concreteComponent] = new ComponentConfig();
-                }
-            }
+            registrations[concreteComponent] = new TypeRegistrationProxy(concreteComponent, componentProperties[concreteComponent], dependencyLifecycle, factory);
         }
 
         public void Configure<T>(Func<T> componentFactory, DependencyLifecycle dependencyLifecycle)
         {
+            ThrowIfAlreadyInitialized();
+
             var componentType = typeof(T);
-
-            if (HasComponent(componentType))
-            {
-                return;
-            }
-
-            var funcFactory = new ArbitraryFuncDelegatingFactoryObject<T>(componentFactory, dependencyLifecycle == DependencyLifecycle.SingleInstance);
-            
-            context.ObjectFactory.RegisterSingleton(componentType.FullName, funcFactory);
+            registrations[componentType] = new ComponentFactoryRegistration<T>(componentFactory, dependencyLifecycle);
         }
 
         public void ConfigureProperty(Type concreteComponent, string property, object value)
         {
-            if (initialized)
+            ThrowIfAlreadyInitialized();
+
+            var componentConfig = new Dictionary<Type, ComponentConfig>(componentProperties);
+            ComponentConfig result;
+            componentConfig.TryGetValue(concreteComponent, out result);
+
+            if (result == null)
             {
-                throw new InvalidOperationException("You can't alter the registrations after the container components has been resolved from the container");
+                throw new InvalidOperationException("Cannot configure property before the component has been configured. Please call 'Configure' first.");
             }
 
-            lock (componentProperties)
-            {
-                ComponentConfig result;
-                componentProperties.TryGetValue(concreteComponent, out result);
-
-                if (result == null)
-                {
-                    throw new InvalidOperationException("Cannot configure property before the component has been configured. Please call 'Configure' first.");
-                }
-
-                result.ConfigureProperty(property, value);
-            }
+            result.ConfigureProperty(property, value);
         }
 
         public void RegisterSingleton(Type lookupType, object instance)
         {
-            if (initialized)
-            {
-                throw new InvalidOperationException("You can't alter the registrations after the container components has been resolved from the container");
-            }
+            ThrowIfAlreadyInitialized();
 
-            context.ObjectFactory.RegisterSingleton(lookupType.FullName, instance);
+            registrations[lookupType] = new SingletonRegistration(lookupType, instance);
         }
 
         public bool HasComponent(Type componentType)
         {
-            if (componentProperties.ContainsKey(componentType))
-            {
-                return true;
-            }
+            var registeredTypes = new List<Type>(registrations.Keys);
 
-            if (context.ObjectFactory.ContainsObjectDefinition(componentType.FullName))
-            {
-                return true;
-            }
-
-            if (context.ObjectFactory.ContainsSingleton(componentType.FullName))
-            {
-                return true;
-            }
-
-            foreach (var component in componentProperties.Keys)
-            {
-                if (componentType.IsAssignableFrom(component))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return registeredTypes.Any(componentType.IsAssignableFrom);
         }
 
         public void Release(object instance)
@@ -190,29 +164,31 @@
 
         void Init()
         {
-            if (initialized)
+            if (Interlocked.Exchange(ref intializedSignaled, 1) != 0)
             {
                 return;
             }
 
-            lock (componentProperties)
+            foreach (var action in new List<RegisterAction>(registrations.Values.Where(r => IsRootContainer || r.ApplicableForChildContainer)))
             {
-                foreach (var t in componentProperties.Keys)
-                {
-                    var builder = ObjectDefinitionBuilder.RootObjectDefinition(factory, t)
-                        .SetAutowireMode(AutoWiringMode.AutoDetect)
-                        .SetSingleton(typeHandleLookup[t] == DependencyLifecycle.SingleInstance);                    
-
-                    componentProperties[t].Configure(builder);
-
-                    IObjectDefinition def = builder.ObjectDefinition;
-                    context.RegisterObjectDefinition(t.FullName, def);
-                }
+                action.Register(context);
             }
 
             initialized = true;
             context.Refresh();
         }
 
+        bool IsRootContainer
+        {
+            get { return !isChildContainer; }
+        }
+
+        void ThrowIfAlreadyInitialized()
+        {
+            if (initialized)
+            {
+                throw new InvalidOperationException("You can't alter the registrations after the container components has been resolved from the container");
+            }
+        }
     }
 }

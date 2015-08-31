@@ -112,6 +112,11 @@
         {
             ThrowIfAlreadyInitialized();
 
+            if (registrations.ContainsKey(concreteComponent))
+            {
+                return;
+            }
+
             if (!componentProperties.ContainsKey(concreteComponent))
             {
                 componentProperties[concreteComponent] = new ComponentConfig();
@@ -125,6 +130,12 @@
             ThrowIfAlreadyInitialized();
 
             var componentType = typeof(T);
+
+            if (registrations.ContainsKey(componentType))
+            {
+                return;
+            }
+
             registrations[componentType] = new ComponentFactoryRegistration<T>(componentFactory, dependencyLifecycle);
         }
 

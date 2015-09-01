@@ -44,7 +44,7 @@ namespace NServiceBus.AcceptanceTests.Hosting
                 {
                     // remove the override, we need to hack it via reflection!
                     var fieldInfo = s.GetType().GetField("Overrides", BindingFlags.Instance | BindingFlags.NonPublic);
-                    var  dictionary = (ConcurrentDictionary<string, object>) fieldInfo.GetValue(s);
+                    var dictionary = (ConcurrentDictionary<string, object>)fieldInfo.GetValue(s);
                     object s2;
                     dictionary.TryRemove("NServiceBus.HostInformation.HostId", out s2);
 
@@ -59,7 +59,18 @@ namespace NServiceBus.AcceptanceTests.Hosting
 
             protected override void Setup(FeatureConfigurationContext context)
             {
-                context.Container.ConfigureProperty<Context>(c => c.NotSet, notSet);
+                context.Container.ConfigureComponent<Startup>(b => new Startup(notSet, b.Build<Context>()), DependencyLifecycle.InstancePerCall);
+                RegisterStartupTask<Startup>();
+            }
+
+            class Startup : FeatureStartupTask
+            {
+                public Startup(bool notSet, Context context)
+                {
+                    context.NotSet = notSet;
+                }
+
+                protected override void OnStart() { }
             }
         }
 

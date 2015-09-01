@@ -6,6 +6,7 @@
     using NServiceBus.AcceptanceTesting;
     using NServiceBus.AcceptanceTests.EndpointTemplates;
     using NServiceBus.AcceptanceTests.ScenarioDescriptors;
+    using NServiceBus.Features;
     using NUnit.Framework;
 
     public class When_setting_msmq_label_generator : NServiceBusAcceptanceTest
@@ -74,7 +75,7 @@
         }
 
 
-        public class EndPoint : EndpointConfigurationBuilder, IWantToRunBeforeConfigurationIsFinalized
+        public class EndPoint : EndpointConfigurationBuilder
         {
             static bool initialized;
             public EndPoint()
@@ -86,6 +87,7 @@
                 initialized = true;
                 EndpointSetup<DefaultServer>(c =>
                 {
+                    c.EnableFeature<SetContextFeature>();
                     c.AuditProcessedMessagesTo("labelAuditQueue");
                     c.UseTransport<MsmqTransport>().ApplyLabelToMessages(GetMessageLabel);
                 });
@@ -100,9 +102,22 @@
                 return "MyLabel";
             }
 
-            public void Run(Configure config)
+            public class SetContextFeature : Feature
             {
-                Context = config.Builder.Build<Context>();
+                protected override void Setup(FeatureConfigurationContext context)
+                {
+                    RegisterStartupTask<Startup>();
+                }
+
+                class Startup : FeatureStartupTask
+                {
+                    public Context Context { get; set; }
+
+                    protected override void OnStart()
+                    {
+                        EndPoint.Context = this.Context;
+                    }
+                }
             }
         }
 

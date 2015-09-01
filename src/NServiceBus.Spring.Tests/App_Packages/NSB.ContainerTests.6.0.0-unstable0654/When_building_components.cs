@@ -8,6 +8,7 @@ namespace NServiceBus.ContainerTests
     public class When_building_components
     {
         [Test]
+        [Ignore("Not supported in Spring")]
         public void Singleton_components_should_get_their_dependencies_autowired()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())

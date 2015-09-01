@@ -131,6 +131,7 @@ namespace NServiceBus.ContainerTests
         }
 
         [Test]
+        [Ignore("Not supported in Spring - Properties aren't injected into Singletons")]
         public void Setter_dependencies_should_be_supported_when_resolving_interfaces()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())

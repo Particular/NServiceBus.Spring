@@ -14,10 +14,7 @@
             this.componentFactory = componentFactory;
         }
 
-        public override bool ApplicableForChildContainer
-        {
-            get { return dependencyLifecycle == DependencyLifecycle.InstancePerUnitOfWork; }
-        }
+        public override bool ApplicableForChildContainer => dependencyLifecycle == DependencyLifecycle.InstancePerUnitOfWork;
 
         public override void Register(GenericApplicationContext context)
         {
@@ -26,6 +23,10 @@
             var funcFactory = new ArbitraryFuncDelegatingFactoryObject<T>(componentFactory, dependencyLifecycle == DependencyLifecycle.SingleInstance);
 
             context.ObjectFactory.RegisterSingleton(componentType.FullName, funcFactory);
+        }
+        public override bool MatchesComponent(Type type)
+        {
+            return type.IsAssignableFrom(typeof(T));
         }
     }
 }

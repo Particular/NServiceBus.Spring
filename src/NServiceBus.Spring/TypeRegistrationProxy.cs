@@ -6,10 +6,10 @@
 
     class TypeRegistrationProxy : RegisterAction
     {
-        readonly DependencyLifecycle dependencyLifecycle;
-        readonly Type componentType;
-        readonly ComponentConfig componentConfig;
-        readonly IObjectDefinitionFactory definitionFactory;
+        DependencyLifecycle dependencyLifecycle;
+        Type componentType;
+        ComponentConfig componentConfig;
+        IObjectDefinitionFactory definitionFactory;
 
         public TypeRegistrationProxy(Type componentType, ComponentConfig componentConfig, DependencyLifecycle dependencyLifecycle, IObjectDefinitionFactory definitionFactory)
         {
@@ -19,18 +19,26 @@
             this.dependencyLifecycle = dependencyLifecycle;
         }
 
-        public override bool ApplicableForChildContainer
-        {
-            get { return dependencyLifecycle == DependencyLifecycle.InstancePerUnitOfWork; }
-        }
+        public override bool ApplicableForChildContainer => dependencyLifecycle == DependencyLifecycle.InstancePerUnitOfWork;
 
         public override void Register(GenericApplicationContext context)
         {
-            var registerAction = context.Name.StartsWith("child_of_") ?
-                (RegisterAction)new ChildContainerTypeRegistration(componentType, componentConfig, dependencyLifecycle, definitionFactory) :
-                new RootContainerTypeRegistration(componentType, componentConfig, dependencyLifecycle, definitionFactory);
+            RegisterAction registerAction;
+            if (context.Name.StartsWith("child_of_"))
+            {
+                registerAction = new ChildContainerTypeRegistration(componentType, componentConfig, dependencyLifecycle, definitionFactory);
+            }
+            else
+            {
+                registerAction = new RootContainerTypeRegistration(componentType, componentConfig, dependencyLifecycle, definitionFactory);
+            }
 
             registerAction.Register(context);
+        }
+
+        public override bool MatchesComponent(Type type)
+        {
+            return type.IsAssignableFrom(componentType);
         }
     }
 }

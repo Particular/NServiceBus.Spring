@@ -20,6 +20,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="..\..\binaries\containers\spring\NServiceBus.ObjectBuilder.Spring.???" target="lib\net451" />
+    <file src="..\..\binaries\containers\spring\NServiceBus.ObjectBuilder.Spring.???" target="lib\net452" />
   </files>
 </package>

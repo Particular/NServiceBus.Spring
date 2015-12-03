@@ -44,10 +44,7 @@
 
         void DisposeManaged()
         {
-            if (context != null)
-            {
-                context.Dispose();
-            }
+            context?.Dispose();
         }
 
         public IContainer BuildChildContainer()
@@ -56,7 +53,7 @@
 
             var childContext = new GenericApplicationContext(context)
             {
-                Name = string.Format("child_of_{0}", context.Name)
+                Name = $"child_of_{context.Name}"
             };
 
             return new SpringObjectBuilder(childContext)
@@ -93,7 +90,7 @@
                 }
             }
 
-            throw new ArgumentException(string.Format("{0} has not been configured. In order to avoid this exception, check the return value of the 'HasComponent' method for this type.", typeToBuild));
+            throw new ArgumentException($"{typeToBuild} has not been configured. In order to avoid this exception, check the return value of the 'HasComponent' method for this type.");
         }
 
         public IEnumerable<object> BuildAll(Type typeToBuild)
@@ -135,7 +132,6 @@
             {
                 return;
             }
-
             registrations[componentType] = new ComponentFactoryRegistration<T>(componentFactory, dependencyLifecycle);
         }
 
@@ -158,15 +154,21 @@
         public void RegisterSingleton(Type lookupType, object instance)
         {
             ThrowIfAlreadyInitialized();
-
-            registrations[lookupType] = new SingletonRegistration(lookupType, instance);
+            var existing = registrations.Values.OfType<SingletonRegistration>()
+                .SingleOrDefault(x => ReferenceEquals(x.Instance, instance));
+            if (existing == null)
+            {
+                registrations[lookupType] = new SingletonRegistration(lookupType, instance);
+            }
+            else
+            {
+                existing.AppendAlias(lookupType);
+            }
         }
 
         public bool HasComponent(Type componentType)
         {
-            var registeredTypes = new List<Type>(registrations.Keys);
-
-            return registeredTypes.Any(componentType.IsAssignableFrom);
+            return registrations.Values.Any(_=>_.MatchesComponent(componentType));
         }
 
         public void Release(object instance)
@@ -189,10 +191,7 @@
             context.Refresh();
         }
 
-        bool IsRootContainer
-        {
-            get { return !isChildContainer; }
-        }
+        bool IsRootContainer => !isChildContainer;
 
         void ThrowIfAlreadyInitialized()
         {

@@ -7,10 +7,10 @@ namespace NServiceBus.ObjectBuilder.Spring
 
     abstract class TypeRegistration : RegisterAction
     {
-        protected readonly DependencyLifecycle dependencyLifecycle;
-        protected readonly Type componentType;
-        protected readonly IObjectDefinitionFactory definitionFactory;
-        readonly ComponentConfig componentConfig;
+        protected DependencyLifecycle dependencyLifecycle;
+        protected Type componentType;
+        protected IObjectDefinitionFactory definitionFactory;
+        ComponentConfig componentConfig;
 
         protected TypeRegistration(Type componentType, ComponentConfig componentConfig, DependencyLifecycle dependencyLifecycle, IObjectDefinitionFactory definitionFactory)
         {
@@ -36,5 +36,10 @@ namespace NServiceBus.ObjectBuilder.Spring
         }
 
         protected abstract ObjectDefinitionBuilder CreateBuilder();
+
+        public override bool MatchesComponent(Type type)
+        {
+            return type.IsAssignableFrom(componentType);
+        }
     }
 }

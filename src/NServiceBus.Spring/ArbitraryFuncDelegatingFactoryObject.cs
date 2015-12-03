@@ -32,10 +32,7 @@ namespace NServiceBus.ObjectBuilder.Spring
         /// <summary>
         /// Return the <see cref="Type"/> of object that this <see cref="IFactoryObject"/> creates, or <see langword="null"/> if not known in advance.
         /// </summary>
-        public Type ObjectType
-        {
-            get { return typeof(T); }
-        }
+        public Type ObjectType => typeof(T);
 
         /// <summary>
         /// Is the object managed by this factory a singleton or a prototype?

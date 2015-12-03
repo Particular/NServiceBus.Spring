@@ -26,9 +26,9 @@ namespace NServiceBus.ContainerTests
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
 
-            }
                 Assert.IsFalse(weak.IsAlive);
                 Assert.IsTrue(TransientClass.Destructed);
+            }
 
         }
 

@@ -20,7 +20,7 @@
         {
             var componentType = typeof(T);
 
-            var funcFactory = new ArbitraryFuncDelegatingFactoryObject<T>(componentFactory, dependencyLifecycle == DependencyLifecycle.SingleInstance);
+            var funcFactory = new ArbitraryFuncDelegatingFactoryObject<T>(componentFactory, dependencyLifecycle == DependencyLifecycle.SingleInstance || dependencyLifecycle == DependencyLifecycle.InstancePerUnitOfWork);
 
             context.ObjectFactory.RegisterSingleton(componentType.FullName, funcFactory);
         }

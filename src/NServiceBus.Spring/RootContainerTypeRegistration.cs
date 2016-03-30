@@ -15,7 +15,7 @@ namespace NServiceBus.ObjectBuilder.Spring
         {
             return ObjectDefinitionBuilder.RootObjectDefinition(definitionFactory, componentType)
                 .SetAutowireMode(AutoWiringMode.AutoDetect)
-                .SetSingleton(dependencyLifecycle == DependencyLifecycle.SingleInstance);
+                .SetSingleton(dependencyLifecycle == DependencyLifecycle.SingleInstance || dependencyLifecycle == DependencyLifecycle.InstancePerUnitOfWork);
         }
     }
 }

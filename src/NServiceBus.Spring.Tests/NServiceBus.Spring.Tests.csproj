@@ -35,7 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NServiceBus.Core, Version=6.0.0.0, Culture=neutral, PublicKeyToken=9fc386479f8a226c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NServiceBus.6.0.0-unstable1205\lib\net452\NServiceBus.Core.dll</HintPath>
+      <HintPath>..\packages\NServiceBus.6.0.0-unstable1751\lib\net452\NServiceBus.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework">
@@ -50,13 +50,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Packages\NSB.ContainerTests.6.0.0-unstable1205\TestContainerBuilder.cs" />
-    <Compile Include="App_Packages\NSB.ContainerTests.6.0.0-unstable1205\When_building_components.cs" />
-    <Compile Include="App_Packages\NSB.ContainerTests.6.0.0-unstable1205\When_disposing_the_builder.cs" />
-    <Compile Include="App_Packages\NSB.ContainerTests.6.0.0-unstable1205\When_querying_for_registered_components.cs" />
-    <Compile Include="App_Packages\NSB.ContainerTests.6.0.0-unstable1205\When_registering_components.cs" />
-    <Compile Include="App_Packages\NSB.ContainerTests.6.0.0-unstable1205\When_releasing_components.cs" />
-    <Compile Include="App_Packages\NSB.ContainerTests.6.0.0-unstable1205\When_using_nested_containers.cs" />
+    <Compile Include="App_Packages\NSB.ContainerTests.6.0.0-unstable1751\TestContainerBuilder.cs" />
+    <Compile Include="App_Packages\NSB.ContainerTests.6.0.0-unstable1751\When_building_components.cs" />
+    <Compile Include="App_Packages\NSB.ContainerTests.6.0.0-unstable1751\When_disposing_the_builder.cs" />
+    <Compile Include="App_Packages\NSB.ContainerTests.6.0.0-unstable1751\When_querying_for_registered_components.cs" />
+    <Compile Include="App_Packages\NSB.ContainerTests.6.0.0-unstable1751\When_registering_components.cs" />
+    <Compile Include="App_Packages\NSB.ContainerTests.6.0.0-unstable1751\When_using_nested_containers.cs" />
     <Compile Include="SetUpFixture.cs" />
     <Compile Include="When_using_nested_containers_including_reconfiguration.cs" />
   </ItemGroup>

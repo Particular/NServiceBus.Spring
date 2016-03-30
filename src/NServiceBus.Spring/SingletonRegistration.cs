@@ -7,21 +7,18 @@
 
     class SingletonRegistration : RegisterAction
     {
-        List<Type> componentTypes = new List<Type>();
-        public readonly object Instance;
-
         public SingletonRegistration(Type componentType, object instance)
         {
             Instance = instance;
             componentTypes.Add(componentType);
         }
 
+        public override bool ApplicableForChildContainer => false;
+
         public void AppendAlias(Type componentType)
         {
             componentTypes.Add(componentType);
         }
-
-        public override bool ApplicableForChildContainer => false;
 
         public override void Register(GenericApplicationContext context)
         {
@@ -37,5 +34,8 @@
         {
             return componentTypes.Any(type.IsAssignableFrom);
         }
+
+        public readonly object Instance;
+        List<Type> componentTypes = new List<Type>();
     }
 }

@@ -17,6 +17,5 @@
                 .SetAutowireMode(AutoWiringMode.AutoDetect)
                 .SetSingleton(true);
         }
-
     }
 }

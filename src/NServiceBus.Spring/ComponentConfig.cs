@@ -5,7 +5,12 @@
 
     class ComponentConfig : IComponentConfig
     {
-        Dictionary<string, object> properties = new Dictionary<string, object>();
+        public IComponentConfig ConfigureProperty(string name, object value)
+        {
+            properties[name] = value;
+
+            return this;
+        }
 
         public void Configure(ObjectDefinitionBuilder builder)
         {
@@ -15,11 +20,6 @@
             }
         }
 
-        public IComponentConfig ConfigureProperty(string name, object value)
-        {
-            properties[name] = value;
-
-            return this;
-        }
+        Dictionary<string, object> properties = new Dictionary<string, object>();
     }
 }

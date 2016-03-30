@@ -5,9 +5,6 @@ namespace NServiceBus.ObjectBuilder.Spring
 
     class ArbitraryFuncDelegatingFactoryObject<T> : IFactoryObject
     {
-        Func<T> builderDelegate;
-
-
         public ArbitraryFuncDelegatingFactoryObject(Func<T> builderDelegate, bool isSingleton)
         {
             this.builderDelegate = builderDelegate;
@@ -19,7 +16,11 @@ namespace NServiceBus.ObjectBuilder.Spring
         /// Return an instance (possibly shared or independent) of the object managed by this factory.
         /// </summary>
         /// <remarks>
-        /// <note type="caution">If this method is being called in the context of an enclosing IoC container and returns <see langword="null"/>, the IoC container will consider this factory object as not being fully initialized and throw a corresponding (and most probably fatal) exception.</note>
+        /// <note type="caution">
+        /// If this method is being called in the context of an enclosing IoC container and returns
+        /// <see langword="null" />, the IoC container will consider this factory object as not being fully initialized and throw a
+        /// corresponding (and most probably fatal) exception.
+        /// </note>
         /// </remarks>
         /// <returns>
         /// An instance (possibly shared or independent) of the object managed by this factory.
@@ -30,7 +31,8 @@ namespace NServiceBus.ObjectBuilder.Spring
         }
 
         /// <summary>
-        /// Return the <see cref="Type"/> of object that this <see cref="IFactoryObject"/> creates, or <see langword="null"/> if not known in advance.
+        /// Return the <see cref="Type" /> of object that this <see cref="IFactoryObject" /> creates, or <see langword="null" /> if
+        /// not known in advance.
         /// </summary>
         public Type ObjectType => typeof(T);
 
@@ -38,5 +40,7 @@ namespace NServiceBus.ObjectBuilder.Spring
         /// Is the object managed by this factory a singleton or a prototype?
         /// </summary>
         public bool IsSingleton { get; private set; }
+
+        Func<T> builderDelegate;
     }
 }

@@ -2,7 +2,7 @@
 {
     using System;
     using System.Threading.Tasks;
-    using NServiceBus.ContainerTests;
+    using ContainerTests;
     using NUnit.Framework;
 
     [TestFixture]
@@ -62,14 +62,12 @@
             }
         }
 
-        interface IRealBus { }
+        interface IRealBus
+        {
+        }
 
         class ConventionalBusDependency : IDisposable
         {
-            public static int InstanceCounter;
-
-            public static int DisposeCalled;
-
             public ConventionalBusDependency()
             {
                 InstanceCounter++;
@@ -79,18 +77,25 @@
             {
                 DisposeCalled++;
             }
+
+            public static int InstanceCounter;
+
+            public static int DisposeCalled;
         }
-        class RealBus : IRealBus { }
+
+        class RealBus : IRealBus
+        {
+        }
 
         class ConventionalBus : IRealBus
         {
-            // ReSharper disable once NotAccessedField.Local
-            readonly ConventionalBusDependency conventionalBusDependency;
-
             public ConventionalBus(ConventionalBusDependency dependency)
             {
                 conventionalBusDependency = dependency;
             }
+
+            // ReSharper disable once NotAccessedField.Local
+            readonly ConventionalBusDependency conventionalBusDependency;
         }
     }
 }

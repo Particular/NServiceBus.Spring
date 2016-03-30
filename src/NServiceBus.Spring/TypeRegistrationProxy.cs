@@ -6,11 +6,6 @@
 
     class TypeRegistrationProxy : RegisterAction
     {
-        DependencyLifecycle dependencyLifecycle;
-        Type componentType;
-        ComponentConfig componentConfig;
-        IObjectDefinitionFactory definitionFactory;
-
         public TypeRegistrationProxy(Type componentType, ComponentConfig componentConfig, DependencyLifecycle dependencyLifecycle, IObjectDefinitionFactory definitionFactory)
         {
             this.definitionFactory = definitionFactory;
@@ -40,5 +35,10 @@
         {
             return type.IsAssignableFrom(componentType);
         }
+
+        DependencyLifecycle dependencyLifecycle;
+        Type componentType;
+        ComponentConfig componentConfig;
+        IObjectDefinitionFactory definitionFactory;
     }
 }

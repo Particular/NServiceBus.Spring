@@ -4,25 +4,17 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
+    using Common;
     using global::Spring.Context.Support;
     using global::Spring.Objects.Factory.Support;
-    using NServiceBus.ObjectBuilder.Common;
 
     /// <summary>
-    /// Implementation of <see cref="IContainer"/> using the Spring Framework container
+    /// Implementation of <see cref="IContainer" /> using the Spring Framework container
     /// </summary>
     class SpringObjectBuilder : IContainer
     {
-        int intializedSignaled;
-        GenericApplicationContext context;
-        bool isChildContainer;
-        Dictionary<Type, RegisterAction> registrations = new Dictionary<Type, RegisterAction>();
-        Dictionary<Type, ComponentConfig> componentProperties = new Dictionary<Type, ComponentConfig>();
-        bool initialized;
-        DefaultObjectDefinitionFactory factory = new DefaultObjectDefinitionFactory();
-
         /// <summary>
-        /// Instantiates the builder using a new <see cref="GenericApplicationContext"/>.
+        /// Instantiates the builder using a new <see cref="GenericApplicationContext" />.
         /// </summary>
         public SpringObjectBuilder()
             : this(new GenericApplicationContext())
@@ -37,14 +29,11 @@
             this.context = context;
         }
 
+        bool IsRootContainer => !isChildContainer;
+
         public void Dispose()
         {
             //Injected at compile time
-        }
-
-        void DisposeManaged()
-        {
-            context?.Dispose();
         }
 
         public IContainer BuildChildContainer()
@@ -57,12 +46,12 @@
             };
 
             return new SpringObjectBuilder(childContext)
-                   {
-                       isChildContainer = true,
-                       componentProperties = componentProperties,
-                       registrations = registrations,
-                       factory = factory
-                   };
+            {
+                isChildContainer = true,
+                componentProperties = componentProperties,
+                registrations = registrations,
+                factory = factory
+            };
         }
 
         public object Build(Type typeToBuild)
@@ -168,11 +157,16 @@
 
         public bool HasComponent(Type componentType)
         {
-            return registrations.Values.Any(_=>_.MatchesComponent(componentType));
+            return registrations.Values.Any(_ => _.MatchesComponent(componentType));
         }
 
         public void Release(object instance)
         {
+        }
+
+        void DisposeManaged()
+        {
+            context?.Dispose();
         }
 
         void Init()
@@ -191,8 +185,6 @@
             context.Refresh();
         }
 
-        bool IsRootContainer => !isChildContainer;
-
         void ThrowIfAlreadyInitialized()
         {
             if (initialized)
@@ -200,5 +192,13 @@
                 throw new InvalidOperationException("You can't alter the registrations after the container components has been resolved from the container");
             }
         }
+
+        int intializedSignaled;
+        GenericApplicationContext context;
+        bool isChildContainer;
+        Dictionary<Type, RegisterAction> registrations = new Dictionary<Type, RegisterAction>();
+        Dictionary<Type, ComponentConfig> componentProperties = new Dictionary<Type, ComponentConfig>();
+        bool initialized;
+        DefaultObjectDefinitionFactory factory = new DefaultObjectDefinitionFactory();
     }
 }

@@ -34,21 +34,16 @@
 
             public class MyMessageHandler : IHandleMessages<MyMessage>
             {
-                public MyMessageHandler(Context testContext)
-                {
-                    this.testContext = testContext;
-                }
+                public Context Context { get; set; }
 
                 public MyPropDependency MyPropDependency { get; set; }
 
                 public Task Handle(MyMessage message, IMessageHandlerContext context)
                 {
-                    testContext.PropertyWasInjected = MyPropDependency != null;
-                    testContext.WasCalled = true;
+                    Context.PropertyWasInjected = MyPropDependency != null;
+                    Context.WasCalled = true;
                     return Task.FromResult(0);
                 }
-
-                Context testContext;
             }
 
             public class MyPropDependency

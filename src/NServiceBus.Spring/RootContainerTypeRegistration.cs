@@ -6,8 +6,8 @@ namespace NServiceBus.ObjectBuilder.Spring
 
     class RootContainerTypeRegistration : TypeRegistration
     {
-        public RootContainerTypeRegistration(Type componentType, ComponentConfig componentConfig, DependencyLifecycle dependencyLifecycle, IObjectDefinitionFactory definitionFactory)
-            : base(componentType, componentConfig, dependencyLifecycle, definitionFactory)
+        public RootContainerTypeRegistration(Type componentType, DependencyLifecycle dependencyLifecycle, IObjectDefinitionFactory definitionFactory)
+            : base(componentType, dependencyLifecycle, definitionFactory)
         {
         }
 

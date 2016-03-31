@@ -6,10 +6,9 @@
 
     class TypeRegistrationProxy : RegisterAction
     {
-        public TypeRegistrationProxy(Type componentType, ComponentConfig componentConfig, DependencyLifecycle dependencyLifecycle, IObjectDefinitionFactory definitionFactory)
+        public TypeRegistrationProxy(Type componentType, DependencyLifecycle dependencyLifecycle, IObjectDefinitionFactory definitionFactory)
         {
             this.definitionFactory = definitionFactory;
-            this.componentConfig = componentConfig;
             this.componentType = componentType;
             this.dependencyLifecycle = dependencyLifecycle;
         }
@@ -21,11 +20,11 @@
             RegisterAction registerAction;
             if (context.Name.StartsWith("child_of_"))
             {
-                registerAction = new ChildContainerTypeRegistration(componentType, componentConfig, dependencyLifecycle, definitionFactory);
+                registerAction = new ChildContainerTypeRegistration(componentType, dependencyLifecycle, definitionFactory);
             }
             else
             {
-                registerAction = new RootContainerTypeRegistration(componentType, componentConfig, dependencyLifecycle, definitionFactory);
+                registerAction = new RootContainerTypeRegistration(componentType, dependencyLifecycle, definitionFactory);
             }
 
             registerAction.Register(context);
@@ -38,7 +37,6 @@
 
         DependencyLifecycle dependencyLifecycle;
         Type componentType;
-        ComponentConfig componentConfig;
         IObjectDefinitionFactory definitionFactory;
     }
 }

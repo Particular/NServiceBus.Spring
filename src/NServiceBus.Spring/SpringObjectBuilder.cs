@@ -8,29 +8,17 @@
     using global::Spring.Context.Support;
     using global::Spring.Objects.Factory.Support;
 
-    /// <summary>
-    /// Implementation of <see cref="IContainer" /> using the Spring Framework container
-    /// </summary>
     class SpringObjectBuilder : IContainer
     {
-        /// <summary>
-        /// Instantiates the builder using a new <see cref="GenericApplicationContext" />.
-        /// </summary>
-        public SpringObjectBuilder()
-            : this(new GenericApplicationContext())
+        public SpringObjectBuilder() : this(new GenericApplicationContext())
         {
         }
 
-        /// <summary>
-        /// Instantiates the builder using the given container.
-        /// </summary>
         public SpringObjectBuilder(GenericApplicationContext context)
         {
             this.context = context;
         }
-
-        bool IsRootContainer => !isChildContainer;
-
+        
         public void Dispose()
         {
             //Injected at compile time
@@ -48,7 +36,6 @@
             return new SpringObjectBuilder(childContext)
             {
                 isChildContainer = true,
-                componentProperties = componentProperties,
                 registrations = registrations,
                 factory = factory
             };
@@ -102,13 +89,8 @@
             {
                 return;
             }
-
-            if (!componentProperties.ContainsKey(concreteComponent))
-            {
-                componentProperties[concreteComponent] = new ComponentConfig();
-            }
-
-            registrations[concreteComponent] = new TypeRegistrationProxy(concreteComponent, componentProperties[concreteComponent], dependencyLifecycle, factory);
+            
+            registrations[concreteComponent] = new TypeRegistrationProxy(concreteComponent, dependencyLifecycle, factory);
         }
 
         public void Configure<T>(Func<T> componentFactory, DependencyLifecycle dependencyLifecycle)
@@ -122,22 +104,6 @@
                 return;
             }
             registrations[componentType] = new ComponentFactoryRegistration<T>(componentFactory, dependencyLifecycle);
-        }
-
-        public void ConfigureProperty(Type concreteComponent, string property, object value)
-        {
-            ThrowIfAlreadyInitialized();
-
-            var componentConfig = new Dictionary<Type, ComponentConfig>(componentProperties);
-            ComponentConfig result;
-            componentConfig.TryGetValue(concreteComponent, out result);
-
-            if (result == null)
-            {
-                throw new InvalidOperationException("Cannot configure property before the component has been configured. Please call 'Configure' first.");
-            }
-
-            result.ConfigureProperty(property, value);
         }
 
         public void RegisterSingleton(Type lookupType, object instance)
@@ -164,6 +130,8 @@
         {
         }
 
+        bool IsRootContainer => !isChildContainer;
+
         void DisposeManaged()
         {
             context?.Dispose();
@@ -171,7 +139,7 @@
 
         void Init()
         {
-            if (Interlocked.Exchange(ref intializedSignaled, 1) != 0)
+            if (Interlocked.Exchange(ref intializeSignaled, 1) != 0)
             {
                 return;
             }
@@ -193,11 +161,10 @@
             }
         }
 
-        int intializedSignaled;
+        int intializeSignaled;
         GenericApplicationContext context;
         bool isChildContainer;
         Dictionary<Type, RegisterAction> registrations = new Dictionary<Type, RegisterAction>();
-        Dictionary<Type, ComponentConfig> componentProperties = new Dictionary<Type, ComponentConfig>();
         bool initialized;
         DefaultObjectDefinitionFactory factory = new DefaultObjectDefinitionFactory();
     }

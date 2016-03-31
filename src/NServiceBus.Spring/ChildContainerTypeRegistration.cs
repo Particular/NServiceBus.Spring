@@ -6,8 +6,8 @@
 
     class ChildContainerTypeRegistration : TypeRegistration
     {
-        public ChildContainerTypeRegistration(Type componentType, ComponentConfig componentConfig, DependencyLifecycle dependencyLifecycle, IObjectDefinitionFactory definitionFactory)
-            : base(componentType, componentConfig, dependencyLifecycle, definitionFactory)
+        public ChildContainerTypeRegistration(Type componentType, DependencyLifecycle dependencyLifecycle, IObjectDefinitionFactory definitionFactory)
+            : base(componentType, dependencyLifecycle, definitionFactory)
         {
         }
 
@@ -17,6 +17,5 @@
                 .SetAutowireMode(AutoWiringMode.AutoDetect)
                 .SetSingleton(true);
         }
-
     }
 }

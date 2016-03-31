@@ -60,7 +60,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="NServiceBus.Core, Version=6.0.0.0, Culture=neutral, PublicKeyToken=9fc386479f8a226c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NServiceBus.6.0.0-unstable1751\lib\net452\NServiceBus.Core.dll</HintPath>
+      <HintPath>..\packages\NServiceBus.6.0.0-unstable1776\lib\net452\NServiceBus.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Spring.Core, Version=2.0.1.45000, Culture=neutral, PublicKeyToken=65e474d141e25e07, processorArchitecture=MSIL">
@@ -74,7 +74,6 @@
   <ItemGroup>
     <Compile Include="ArbitraryFuncDelegatingFactoryObject.cs" />
     <Compile Include="ChildContainerTypeRegistration.cs" />
-    <Compile Include="ComponentConfig.cs" />
     <Compile Include="ComponentFactoryRegistration.cs" />
     <Compile Include="RegisterAction.cs" />
     <Compile Include="RootContainerTypeRegistration.cs" />

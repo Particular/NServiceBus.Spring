@@ -5,9 +5,6 @@
 
     class ComponentFactoryRegistration<T> : RegisterAction
     {
-        Func<T> componentFactory;
-        DependencyLifecycle dependencyLifecycle;
-
         public ComponentFactoryRegistration(Func<T> componentFactory, DependencyLifecycle dependencyLifecycle)
         {
             this.dependencyLifecycle = dependencyLifecycle;
@@ -24,9 +21,13 @@
 
             context.ObjectFactory.RegisterSingleton(componentType.FullName, funcFactory);
         }
+
         public override bool MatchesComponent(Type type)
         {
             return type.IsAssignableFrom(typeof(T));
         }
+
+        Func<T> componentFactory;
+        DependencyLifecycle dependencyLifecycle;
     }
 }

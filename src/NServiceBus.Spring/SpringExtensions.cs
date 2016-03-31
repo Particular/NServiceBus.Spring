@@ -2,7 +2,7 @@
 {
     using System;
     using Container;
-    using global::Spring.Context.Support;
+    using Spring.Context.Support;
 
     /// <summary>
     /// Spring extension to pass an existing Spring container instance.

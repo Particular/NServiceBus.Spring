@@ -7,15 +7,9 @@ namespace NServiceBus.ObjectBuilder.Spring
 
     abstract class TypeRegistration : RegisterAction
     {
-        protected DependencyLifecycle dependencyLifecycle;
-        protected Type componentType;
-        protected IObjectDefinitionFactory definitionFactory;
-        ComponentConfig componentConfig;
-
-        protected TypeRegistration(Type componentType, ComponentConfig componentConfig, DependencyLifecycle dependencyLifecycle, IObjectDefinitionFactory definitionFactory)
+        protected TypeRegistration(Type componentType, DependencyLifecycle dependencyLifecycle, IObjectDefinitionFactory definitionFactory)
         {
             this.definitionFactory = definitionFactory;
-            this.componentConfig = componentConfig;
             this.componentType = componentType;
             this.dependencyLifecycle = dependencyLifecycle;
         }
@@ -28,9 +22,7 @@ namespace NServiceBus.ObjectBuilder.Spring
         public override void Register(GenericApplicationContext context)
         {
             var builder = CreateBuilder();
-
-            componentConfig.Configure(builder);
-
+            
             IObjectDefinition def = builder.ObjectDefinition;
             context.RegisterObjectDefinition(componentType.FullName, def);
         }
@@ -41,5 +33,9 @@ namespace NServiceBus.ObjectBuilder.Spring
         {
             return type.IsAssignableFrom(componentType);
         }
+
+        protected DependencyLifecycle dependencyLifecycle;
+        protected Type componentType;
+        protected IObjectDefinitionFactory definitionFactory;
     }
 }

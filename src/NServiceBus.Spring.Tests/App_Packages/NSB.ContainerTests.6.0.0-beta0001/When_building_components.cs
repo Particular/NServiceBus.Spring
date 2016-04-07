@@ -88,12 +88,34 @@ namespace NServiceBus.ContainerTests
         [Test]
         public void Should_be_able_to_build_components_registered_after_first_build()
         {
+            using (var builder = TestContainerBuilder.ConstructBuilder())
+            {
+                InitializeBuilder(builder);
+                builder.Build(typeof(SingletonComponent));
+                builder.Configure(typeof(UnregisteredComponent), DependencyLifecycle.SingleInstance);
+
+                var unregisteredComponent = builder.Build(typeof(UnregisteredComponent)) as UnregisteredComponent;
+                Assert.NotNull(unregisteredComponent);
+                Assert.NotNull(unregisteredComponent.SingletonComponent);
+            }
             //Not supported by,typeof(SpringObjectBuilder));
         }
 
         [Test]
         public void Should_support_mixed_dependency_styles()
         {
+            using (var builder = TestContainerBuilder.ConstructBuilder())
+            {
+                InitializeBuilder(builder);
+                builder.Configure(typeof(ComponentWithBothConstructorAndSetterInjection), DependencyLifecycle.InstancePerCall);
+                builder.Configure(typeof(ConstructorDependency), DependencyLifecycle.InstancePerCall);
+                builder.Configure(typeof(SetterDependency), DependencyLifecycle.InstancePerCall);
+
+                var component = (ComponentWithBothConstructorAndSetterInjection) builder.Build(typeof(ComponentWithBothConstructorAndSetterInjection));
+                Assert.NotNull(component.ConstructorDependency);
+                Assert.NotNull(component.SetterDependency);
+            }
+
             //Not supported by, typeof(SpringObjectBuilder));
         }
 
@@ -114,7 +136,7 @@ namespace NServiceBus.ContainerTests
 
         public interface ISingletonComponentWithPropertyDependency
         {
-
+             
         }
 
         public class SingletonComponentWithPropertyDependency : ISingletonComponentWithPropertyDependency

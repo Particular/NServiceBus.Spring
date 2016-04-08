@@ -40,24 +40,6 @@ namespace NServiceBus.ContainerTests
         }
 
         [Test]
-        public void Instance_per_uow_lambda_components_should_yield_different_instances_between_parent_and_child_containers()
-        {
-            using (var builder = TestContainerBuilder.ConstructBuilder())
-            {
-                builder.Configure(() => new InstancePerUoWComponent(), DependencyLifecycle.InstancePerUnitOfWork);
-
-                var parentInstance = builder.Build(typeof(InstancePerUoWComponent));
-
-                using (var childContainer = builder.BuildChildContainer())
-                {
-                    var childInstance = childContainer.Build(typeof(InstancePerUoWComponent));
-
-                    Assert.AreNotSame(parentInstance, childInstance);
-                }
-            }
-        }
-
-        [Test]
         public void Instance_per_uow_components_should_yield_different_instances_between_different_instances_of_child_containers()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())
@@ -119,46 +101,11 @@ namespace NServiceBus.ContainerTests
         }
 
         [Test]
-        public void UoW_lambda_components_in_the_parent_container_should_be_singletons_in_the_same_child_container()
-        {
-            using (var builder = TestContainerBuilder.ConstructBuilder())
-            {
-                builder.Configure(() => new InstancePerUoWComponent(), DependencyLifecycle.InstancePerUnitOfWork);
-
-                using (var nestedContainer = builder.BuildChildContainer())
-                {
-                    var instance1 = nestedContainer.Build(typeof(InstancePerUoWComponent));
-                    var instance2 = nestedContainer.Build(typeof(InstancePerUoWComponent));
-
-                    Assert.AreSame(instance1, instance2, "UoW's should be singleton in child container");
-                }
-            }
-        }
-
-        [Test]
         public void UoW_components_built_on_root_container_should_be_singletons_even_with_child_builder_present()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())
             {
                 builder.Configure(typeof(InstancePerUoWComponent), DependencyLifecycle.InstancePerUnitOfWork);
-
-                using (builder.BuildChildContainer())
-                {
-                    //no-op
-                }
-
-                var instance1 = builder.Build(typeof(InstancePerUoWComponent));
-                var instance2 = builder.Build(typeof(InstancePerUoWComponent));
-                Assert.AreSame(instance1, instance2, "UoW's should be singletons in the root container");
-            }
-        }
-
-        [Test]
-        public void UoW_lambda_components_built_on_root_container_should_be_singletons_even_with_child_builder_present()
-        {
-            using (var builder = TestContainerBuilder.ConstructBuilder())
-            {
-                builder.Configure(() => new InstancePerUoWComponent(), DependencyLifecycle.InstancePerUnitOfWork);
 
                 using (builder.BuildChildContainer())
                 {
@@ -179,11 +126,11 @@ namespace NServiceBus.ContainerTests
                 var singletonInMainContainer = new SingletonComponent();
 
                 builder.RegisterSingleton(typeof(ISingletonComponent), singletonInMainContainer);
-                builder.Configure(typeof(ComponentThatDependsOnSingleton), DependencyLifecycle.InstancePerUnitOfWork);
+                builder.Configure(typeof(ComponentThatDependsOfSingleton), DependencyLifecycle.InstancePerUnitOfWork);
 
                 using (var nestedContainer = builder.BuildChildContainer())
                 {
-                    nestedContainer.Build(typeof(ComponentThatDependsOnSingleton));
+                    nestedContainer.Build(typeof(ComponentThatDependsOfSingleton));
                 }
                 Assert.False(SingletonComponent.DisposeCalled);
             }
@@ -211,23 +158,6 @@ namespace NServiceBus.ContainerTests
             //Not supported by, typeof(SpringObjectBuilder));
         }
 
-        [Test]
-        public void Should_child_container_singleton_instance_be_same_as_root()
-        {
-            using (var builder = TestContainerBuilder.ConstructBuilder())
-            {
-                var singletonInMainContainer = new SingletonComponent2();
-
-                builder.RegisterSingleton(typeof(ISingletonComponent), singletonInMainContainer);
-
-                using (var nestedContainer = builder.BuildChildContainer())
-                {
-
-                    Assert.AreSame(nestedContainer.Build(typeof(ISingletonComponent)),singletonInMainContainer);
-                }
-            }
-        }
-
         public interface IInstanceToReplaceInNested
         {
         }
@@ -250,17 +180,7 @@ namespace NServiceBus.ContainerTests
             public static bool DisposeCalled;
         }
 
-        class SingletonComponent2 : ISingletonComponent, IDisposable
-        {
-            public void Dispose()
-            {
-                DisposeCalled = true;
-            }
-
-            public static bool DisposeCalled;
-        }
-
-        class ComponentThatDependsOnSingleton
+        class ComponentThatDependsOfSingleton
         {
         }
     }

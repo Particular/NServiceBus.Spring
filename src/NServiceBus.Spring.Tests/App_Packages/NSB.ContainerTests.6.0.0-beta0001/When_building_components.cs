@@ -85,17 +85,6 @@ namespace NServiceBus.ContainerTests
             }
         }
 
-        [Test]
-        public void Should_be_able_to_build_components_registered_after_first_build()
-        {
-            //Not supported by,typeof(SpringObjectBuilder));
-        }
-
-        [Test]
-        public void Should_support_mixed_dependency_styles()
-        {
-            //Not supported by, typeof(SpringObjectBuilder));
-        }
 
 
         void InitializeBuilder(IContainer container)

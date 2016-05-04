@@ -1,7 +1,7 @@
 namespace NServiceBus.ContainerTests
 {
     using NServiceBus;
-    using NServiceBus.ObjectBuilder.Common;
+    using ObjectBuilder.Common;
     using NUnit.Framework;
 
     [TestFixture]
@@ -85,8 +85,6 @@ namespace NServiceBus.ContainerTests
             }
         }
 
-
-
         void InitializeBuilder(IContainer container)
         {
             container.Configure(typeof(SingletonComponent), DependencyLifecycle.SingleInstance);
@@ -103,7 +101,7 @@ namespace NServiceBus.ContainerTests
 
         public interface ISingletonComponentWithPropertyDependency
         {
-
+             
         }
 
         public class SingletonComponentWithPropertyDependency : ISingletonComponentWithPropertyDependency

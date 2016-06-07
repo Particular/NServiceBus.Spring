@@ -18,7 +18,7 @@
         {
             this.context = context;
         }
-        
+
         public void Dispose()
         {
             //Injected at compile time
@@ -89,7 +89,7 @@
             {
                 return;
             }
-            
+
             registrations[concreteComponent] = new TypeRegistrationProxy(concreteComponent, dependencyLifecycle, factory);
         }
 
@@ -139,7 +139,7 @@
 
         void Init()
         {
-            if (Interlocked.Exchange(ref intializeSignaled, 1) != 0)
+            if (Interlocked.Exchange(ref initializeSignaled, 1) != 0)
             {
                 return;
             }
@@ -157,11 +157,11 @@
         {
             if (initialized)
             {
-                throw new InvalidOperationException("You can't alter the registrations after the container components has been resolved from the container");
+                throw new InvalidOperationException("Alter the registrations after the container components has been resolved from the container is not possible.");
             }
         }
 
-        int intializeSignaled;
+        int initializeSignaled;
         GenericApplicationContext context;
         bool isChildContainer;
         Dictionary<Type, RegisterAction> registrations = new Dictionary<Type, RegisterAction>();

@@ -157,7 +157,7 @@
         {
             if (initialized)
             {
-                throw new InvalidOperationException("Alter the registrations after the container components has been resolved from the container is not possible.");
+                throw new InvalidOperationException("Altering the registrations, after the container components has been resolved from the container, is not supported.");
             }
         }
 

@@ -37,10 +37,11 @@
             builder.EnableInstallers();
 
             builder.DisableFeature<TimeoutManager>();
-            builder.DisableFeature<SecondLevelRetries>();
-            builder.DisableFeature<FirstLevelRetries>();
             builder.UsePersistence<InMemoryPersistence>();
             builder.UseContainer<SpringBuilder>();
+
+            builder.Recoverability().Delayed(delayedRetried => delayedRetried.NumberOfRetries(0));
+            builder.Recoverability().Immediate(immediateRetried => immediateRetried.NumberOfRetries(0));
 
             builder.RegisterComponents(r => { RegisterInheritanceHierarchyOfContextOnContainer(runDescriptor, r); });
 

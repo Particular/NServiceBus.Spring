@@ -86,7 +86,6 @@ namespace NServiceBus.ContainerTests
         }
 
         [Test]
-        [Explicit]
         public void Should_be_able_to_build_components_registered_after_first_build()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())
@@ -103,7 +102,6 @@ namespace NServiceBus.ContainerTests
         }
 
         [Test]
-        [Explicit]
         public void Should_support_mixed_dependency_styles()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())
@@ -138,7 +136,7 @@ namespace NServiceBus.ContainerTests
 
         public interface ISingletonComponentWithPropertyDependency
         {
-
+             
         }
 
         public class SingletonComponentWithPropertyDependency : ISingletonComponentWithPropertyDependency

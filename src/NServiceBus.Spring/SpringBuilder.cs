@@ -18,14 +18,24 @@ namespace NServiceBus
         /// <returns>The new container wrapper.</returns>
         public override IContainer CreateContainer(ReadOnlySettings settings)
         {
-            GenericApplicationContext existingContext;
+            ContextHolder contextHolder;
 
-            if (settings.TryGet("ExistingContext", out existingContext))
+            if (settings.TryGet(out contextHolder))
             {
-                return new SpringObjectBuilder(existingContext);
+                return new SpringObjectBuilder(contextHolder.ExistingContext);
             }
 
             return new SpringObjectBuilder();
+        }
+
+        internal class ContextHolder
+        {
+            public ContextHolder(GenericApplicationContext context)
+            {
+                ExistingContext = context;
+            }
+
+            public GenericApplicationContext ExistingContext { get; }
         }
     }
 }

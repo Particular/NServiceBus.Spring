@@ -10,12 +10,17 @@
 
     class SpringObjectBuilder : IContainer
     {
-        public SpringObjectBuilder() : this(new GenericApplicationContext())
+        public SpringObjectBuilder() : this(new GenericApplicationContext(), true)
         {
         }
 
-        public SpringObjectBuilder(GenericApplicationContext context)
+        public SpringObjectBuilder(GenericApplicationContext context) : this(context, false)
         {
+        }
+
+        public SpringObjectBuilder(GenericApplicationContext context, bool owned)
+        {
+            this.owned = owned;
             this.context = context;
         }
 
@@ -33,7 +38,7 @@
                 Name = $"child_of_{context.Name}"
             };
 
-            return new SpringObjectBuilder(childContext)
+            return new SpringObjectBuilder(childContext, true)
             {
                 isChildContainer = true,
                 registrations = registrations,
@@ -134,6 +139,10 @@
 
         void DisposeManaged()
         {
+            if (!owned)
+            {
+                return;
+            }
             context?.Dispose();
         }
 
@@ -167,5 +176,6 @@
         Dictionary<Type, RegisterAction> registrations = new Dictionary<Type, RegisterAction>();
         bool initialized;
         DefaultObjectDefinitionFactory factory = new DefaultObjectDefinitionFactory();
+        bool owned;
     }
 }

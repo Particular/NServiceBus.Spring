@@ -19,21 +19,30 @@
         Dictionary<Type, RegisterAction> registrations = new Dictionary<Type, RegisterAction>();
         Dictionary<Type, ComponentConfig> componentProperties = new Dictionary<Type, ComponentConfig>();
         bool initialized;
+        bool owned;
         DefaultObjectDefinitionFactory factory = new DefaultObjectDefinitionFactory();
 
         /// <summary>
         /// Instantiates the builder using a new <see cref="GenericApplicationContext"/>.
         /// </summary>
         public SpringObjectBuilder()
-            : this(new GenericApplicationContext())
+            : this(new GenericApplicationContext(), true)
         {
         }
 
         /// <summary>
         /// Instantiates the builder using the given container.
         /// </summary>
-        public SpringObjectBuilder(GenericApplicationContext context)
+        public SpringObjectBuilder(GenericApplicationContext context) : this(context, false)
         {
+        }
+
+        /// <summary>
+        /// Instantiates the builder using the given container
+        /// </summary>
+        public SpringObjectBuilder(GenericApplicationContext context, bool owned)
+        {
+            this.owned = owned;
             this.context = context;
         }
 
@@ -44,10 +53,12 @@
 
         void DisposeManaged()
         {
-            if (context != null)
+            if (!owned)
             {
-                context.Dispose();
+                return;
             }
+
+            context?.Dispose();
         }
 
         public IContainer BuildChildContainer()
@@ -59,7 +70,7 @@
                 Name = string.Format("child_of_{0}", context.Name)
             };
 
-            return new SpringObjectBuilder(childContext)
+            return new SpringObjectBuilder(childContext, true)
                    {
                        isChildContainer = true,
                        componentProperties = componentProperties,

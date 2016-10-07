@@ -81,11 +81,11 @@ namespace NServiceBus.ContainerTests
             using (var builder = TestContainerBuilder.ConstructBuilder())
             {
                 InitializeBuilder(builder);
-                Assert.That(() => builder.Build(typeof(UnregisteredComponent)), Throws.Exception);
+                Assert.That(() => builder.Build(typeof(UnregisteredComponent)),Throws.Exception);
             }
         }
 
-        [Test, Ignore("Not supported by spring")]
+        [Test]
         public void Should_be_able_to_build_components_registered_after_first_build()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())
@@ -98,9 +98,10 @@ namespace NServiceBus.ContainerTests
                 Assert.NotNull(unregisteredComponent);
                 Assert.NotNull(unregisteredComponent.SingletonComponent);
             }
+            //Not supported by,typeof(SpringObjectBuilder));
         }
 
-        [Test, Ignore("Not supported by spring")]
+        [Test]
         public void Should_support_mixed_dependency_styles()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())
@@ -110,10 +111,12 @@ namespace NServiceBus.ContainerTests
                 builder.Configure(typeof(ConstructorDependency), DependencyLifecycle.InstancePerCall);
                 builder.Configure(typeof(SetterDependency), DependencyLifecycle.InstancePerCall);
 
-                var component = (ComponentWithBothConstructorAndSetterInjection)builder.Build(typeof(ComponentWithBothConstructorAndSetterInjection));
+                var component = (ComponentWithBothConstructorAndSetterInjection) builder.Build(typeof(ComponentWithBothConstructorAndSetterInjection));
                 Assert.NotNull(component.ConstructorDependency);
                 Assert.NotNull(component.SetterDependency);
             }
+
+            //Not supported by, typeof(SpringObjectBuilder));
         }
 
 
@@ -133,7 +136,7 @@ namespace NServiceBus.ContainerTests
 
         public interface ISingletonComponentWithPropertyDependency
         {
-
+             
         }
 
         public class SingletonComponentWithPropertyDependency : ISingletonComponentWithPropertyDependency

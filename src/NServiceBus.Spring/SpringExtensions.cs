@@ -17,7 +17,7 @@
         [CLSCompliant(false)]
         public static void ExistingApplicationContext(this ContainerCustomizations customizations, GenericApplicationContext applicationContext)
         {
-            customizations.Settings.Set("ExistingContext", applicationContext);
+            customizations.Settings.Set<SpringBuilder.ContextHolder>(new SpringBuilder.ContextHolder(applicationContext));
         }
     }
 }

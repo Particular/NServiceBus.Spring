@@ -10,15 +10,20 @@
 
     class SpringObjectBuilder : IContainer
     {
-        public SpringObjectBuilder() : this(new GenericApplicationContext())
+        public SpringObjectBuilder() : this(new GenericApplicationContext(), true)
         {
         }
 
-        public SpringObjectBuilder(GenericApplicationContext context)
+        public SpringObjectBuilder(GenericApplicationContext context) : this(context, false)
         {
+        }
+
+        public SpringObjectBuilder(GenericApplicationContext context, bool owned)
+        {
+            this.owned = owned;
             this.context = context;
         }
-        
+
         public void Dispose()
         {
             //Injected at compile time
@@ -33,7 +38,7 @@
                 Name = $"child_of_{context.Name}"
             };
 
-            return new SpringObjectBuilder(childContext)
+            return new SpringObjectBuilder(childContext, true)
             {
                 isChildContainer = true,
                 registrations = registrations,
@@ -89,7 +94,7 @@
             {
                 return;
             }
-            
+
             registrations[concreteComponent] = new TypeRegistrationProxy(concreteComponent, dependencyLifecycle, factory);
         }
 
@@ -134,12 +139,16 @@
 
         void DisposeManaged()
         {
+            if (!owned)
+            {
+                return;
+            }
             context?.Dispose();
         }
 
         void Init()
         {
-            if (Interlocked.Exchange(ref intializeSignaled, 1) != 0)
+            if (Interlocked.Exchange(ref initializeSignaled, 1) != 0)
             {
                 return;
             }
@@ -157,15 +166,16 @@
         {
             if (initialized)
             {
-                throw new InvalidOperationException("You can't alter the registrations after the container components has been resolved from the container");
+                throw new InvalidOperationException("Altering the registrations, after the container components has been resolved from the container, is not supported.");
             }
         }
 
-        int intializeSignaled;
+        int initializeSignaled;
         GenericApplicationContext context;
         bool isChildContainer;
         Dictionary<Type, RegisterAction> registrations = new Dictionary<Type, RegisterAction>();
         bool initialized;
         DefaultObjectDefinitionFactory factory = new DefaultObjectDefinitionFactory();
+        bool owned;
     }
 }

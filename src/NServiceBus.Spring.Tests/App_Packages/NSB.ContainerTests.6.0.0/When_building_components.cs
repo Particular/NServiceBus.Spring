@@ -85,7 +85,7 @@ namespace NServiceBus.ContainerTests
             }
         }
 
-        [Test]
+        [Test, Ignore("Not supported by spring")]
         public void Should_be_able_to_build_components_registered_after_first_build()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())
@@ -101,7 +101,7 @@ namespace NServiceBus.ContainerTests
             //Not supported by,typeof(SpringObjectBuilder));
         }
 
-        [Test]
+        [Test, Ignore("Not supported by spring")]
         public void Should_support_mixed_dependency_styles()
         {
             using (var builder = TestContainerBuilder.ConstructBuilder())

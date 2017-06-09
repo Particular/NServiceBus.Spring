@@ -33,6 +33,7 @@
                 {
                     var genericContext = new SpecialGenericApplicationContext();
 
+                    config.SendFailedMessagesTo("error");
                     config.UseContainer<SpringBuilder>(c => c.ExistingApplicationContext(genericContext));
 
                     var context = (Context) desc.ScenarioContext;

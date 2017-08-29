@@ -16,12 +16,15 @@
     <UpdateAssemblyInfo>true</UpdateAssemblyInfo>
     <RootNamespace>NServiceBus.ObjectBuilder.Spring</RootNamespace>
   </PropertyGroup>
+  <PropertyGroup>
+    <Description>The Spring Container for the nservicebus</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>NServiceBus.Spring</PackageId>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Common.Logging" Version="3.0.0" />
-    <PackageReference Include="Common.Logging.Core" Version="3.0.0" />
-    <PackageReference Include="Spring.Core" Version="2.0.1" />
+    <PackageReference Include="Spring.Core" Version="[2.0.1, 3.0.0)" />
     <PackageReference Include="Janitor.Fody" Version="1.*" PrivateAssets="all" />
-    <PackageReference Include="NServiceBus" Version="7.0.0-*" />
+    <PackageReference Include="NServiceBus" Version="[7.0.0-*, 8.0.0)" />
     <PackageReference Include="Obsolete.Fody" Version="4.*" PrivateAssets="all" />
     <PackageReference Include="Fody" Version="2.*" PrivateAssets="all" />
     <None Include="..\..\GitVersion.yml" Link="GitVersion.yml" />

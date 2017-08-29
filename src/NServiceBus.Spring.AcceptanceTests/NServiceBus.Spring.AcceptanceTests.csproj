@@ -5,14 +5,16 @@
     <DebugSymbols>True</DebugSymbols>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>PCR0001</NoWarn>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Common.Logging" Version="3.0.0" />
-    <PackageReference Include="Common.Logging.Core" Version="3.0.0" />
-    <PackageReference Include="Spring.Core" Version="2.0.1" />
-    <PackageReference Include="NServiceBus.AcceptanceTesting" Version="6.3.3" />
-    <PackageReference Include="NServiceBus" Version="6.3.3" />
-    <PackageReference Include="NUnit" Version="3.7.1" />
+    <PackageReference Include="Common.Logging" Version="3.*" />
+    <PackageReference Include="Common.Logging.Core" Version="3.*" />
+    <PackageReference Include="Spring.Core" Version="2.*" />
+    <PackageReference Include="NServiceBus.AcceptanceTesting" Version="7.0.0-*" />
+    <PackageReference Include="NServiceBus" Version="7.0.0-*" />
+    <PackageReference Include="NUnit" Version="3.*" />
     <ProjectReference Include="..\NServiceBus.Spring\NServiceBus.Spring.csproj" />
   </ItemGroup>
 </Project>

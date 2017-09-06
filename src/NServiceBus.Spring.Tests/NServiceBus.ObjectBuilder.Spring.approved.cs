@@ -5,21 +5,18 @@
 namespace NServiceBus
 {
     [ObsoleteExAttribute(Message="NServiceBus.Spring has been deprecated. Using another container is advised.  Plea" +
-        "se see https://docs.particular.net/nservicebus/containers/#supported-containers " +
-        "for a list of supported containers.", TreatAsErrorFromVersion="8.0")]
+        "se see the upgrade guide for a list of supported containers.", TreatAsErrorFromVersion="8.0")]
     public class SpringBuilder : NServiceBus.Container.ContainerDefinition
     {
         public SpringBuilder() { }
         [ObsoleteExAttribute(Message="NServiceBus.Spring has been deprecated. Using another container is advised.  Plea" +
-            "se see https://docs.particular.net/nservicebus/containers/#supported-containers " +
-            "for a list of supported containers.", TreatAsErrorFromVersion="8.0")]
+            "se see the upgrade guide for a list of supported containers.", TreatAsErrorFromVersion="8.0")]
         public override NServiceBus.ObjectBuilder.Common.IContainer CreateContainer(NServiceBus.Settings.ReadOnlySettings settings) { }
     }
     public class static SpringExtensions
     {
         [ObsoleteExAttribute(Message="NServiceBus.Spring has been deprecated. Using another container is advised.  Plea" +
-            "se see https://docs.particular.net/nservicebus/containers/#supported-containers " +
-            "for a list of supported containers.", TreatAsErrorFromVersion="8.0")]
+            "se see the upgrade guide for a list of supported containers.", TreatAsErrorFromVersion="8.0")]
         [System.CLSCompliantAttribute(false)]
         public static void ExistingApplicationContext(this NServiceBus.Container.ContainerCustomizations customizations, Spring.Context.Support.GenericApplicationContext applicationContext) { }
     }

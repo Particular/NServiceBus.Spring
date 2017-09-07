@@ -9,6 +9,8 @@ namespace NServiceBus
     /// <summary>
     /// Spring Container
     /// </summary>
+    [ObsoleteEx(Message = obsolete.Message,
+        TreatAsErrorFromVersion = "9.0")]
     public class SpringBuilder : ContainerDefinition
     {
         /// <summary>
@@ -16,6 +18,8 @@ namespace NServiceBus
         /// </summary>
         /// <param name="settings">The settings to check if an existing container exists.</param>
         /// <returns>The new container wrapper.</returns>
+        [ObsoleteEx(Message = obsolete.Message,
+            TreatAsErrorFromVersion = "9.0")]
         public override IContainer CreateContainer(ReadOnlySettings settings)
         {
             ContextHolder contextHolder;

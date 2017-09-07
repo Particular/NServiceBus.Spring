@@ -5,6 +5,7 @@
 
 namespace NServiceBus
 {
+    
     [ObsoleteExAttribute(Message="NServiceBus.Spring has been deprecated. Using another container is advised.  Plea" +
         "se see the upgrade guide for a list of supported containers.", TreatAsErrorFromVersion="9.0")]
     public class SpringBuilder : NServiceBus.Container.ContainerDefinition

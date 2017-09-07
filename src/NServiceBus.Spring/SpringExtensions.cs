@@ -16,7 +16,7 @@
         /// <param name="applicationContext">The existing application context.</param>
         [CLSCompliant(false)]
         [ObsoleteEx(Message = obsolete.Message,
-            TreatAsErrorFromVersion = "8.0")]
+            TreatAsErrorFromVersion = "9.0")]
         public static void ExistingApplicationContext(this ContainerCustomizations customizations, GenericApplicationContext applicationContext)
         {
             customizations.Settings.Set<SpringBuilder.ContextHolder>(new SpringBuilder.ContextHolder(applicationContext));

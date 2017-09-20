@@ -16,5 +16,6 @@
     <PackageReference Include="Common.Logging.Core" Version="3.*" />
     <PackageReference Include="Spring.Core" Version="2.*" />
     <PackageReference Include="NUnit" Version="3.7.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
   </ItemGroup>
 </Project>

@@ -13,7 +13,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <Description>The Spring Container for the nservicebus</Description>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>NServiceBus.Spring</PackageId>
   </PropertyGroup>
   <ItemGroup>

@@ -22,8 +22,18 @@ namespace NServiceBus
 
             if (settings.TryGet(out contextHolder))
             {
+                settings.AddStartupDiagnosticsSection("NServiceBus.Spring", new
+                {
+                    UsingExistingApplicationContext = true
+                });
+
                 return new SpringObjectBuilder(contextHolder.ExistingContext);
             }
+
+            settings.AddStartupDiagnosticsSection("NServiceBus.Spring", new
+            {
+                UsingExistingApplicationContext = false
+            });
 
             return new SpringObjectBuilder();
         }

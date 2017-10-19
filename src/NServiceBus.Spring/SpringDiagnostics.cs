@@ -18,10 +18,7 @@
         /// </summary>
         protected override void Setup(FeatureConfigurationContext context)
         {
-            context.Settings.AddStartupDiagnosticsSection("NServiceBus.Spring", new
-            {
-                UsingExistingApplicationContext = context.Settings.HasSetting<SpringBuilder.ContextHolder>()
-            });
+            context.S
         }
     }
 }

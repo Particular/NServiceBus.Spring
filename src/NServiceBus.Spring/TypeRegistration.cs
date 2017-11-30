@@ -22,7 +22,6 @@ namespace NServiceBus.ObjectBuilder.Spring
         public override void Register(GenericApplicationContext context)
         {
             var builder = CreateBuilder();
-            
             IObjectDefinition def = builder.ObjectDefinition;
             context.RegisterObjectDefinition(componentType.FullName, def);
         }

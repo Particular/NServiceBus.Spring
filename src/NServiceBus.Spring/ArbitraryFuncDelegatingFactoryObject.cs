@@ -11,7 +11,6 @@ namespace NServiceBus.ObjectBuilder.Spring
             IsSingleton = isSingleton;
         }
 
-
         /// <summary>
         /// Return an instance (possibly shared or independent) of the object managed by this factory.
         /// </summary>
@@ -39,7 +38,7 @@ namespace NServiceBus.ObjectBuilder.Spring
         /// <summary>
         /// Is the object managed by this factory a singleton or a prototype?
         /// </summary>
-        public bool IsSingleton { get; private set; }
+        public bool IsSingleton { get; }
 
         Func<T> builderDelegate;
     }

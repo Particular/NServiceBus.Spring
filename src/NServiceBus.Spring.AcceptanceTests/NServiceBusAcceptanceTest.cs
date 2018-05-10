@@ -5,9 +5,6 @@ namespace NServiceBus.AcceptanceTests
     using AcceptanceTesting.Customization;
     using NUnit.Framework;
 
-    /// <summary>
-    /// Base class for all the NSB test that sets up our conventions
-    /// </summary>
     [TestFixture]
     // ReSharper disable once PartialTypeWithSinglePart
     public abstract partial class NServiceBusAcceptanceTest
@@ -15,6 +12,10 @@ namespace NServiceBus.AcceptanceTests
         [SetUp]
         public void SetUp()
         {
+            // Hack: prevents SerializationException ... Type 'x' in assembly 'y' is not marked as serializable.
+            // https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/mitigation-deserialization-of-objects-across-app-domains
+            System.Configuration.ConfigurationManager.GetSection("X");
+
             Conventions.EndpointNamingConvention = t =>
             {
                 var classAndEndpoint = t.FullName.Split('.').Last();

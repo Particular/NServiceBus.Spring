@@ -9,7 +9,7 @@ public class APIApprovals
     [Test]
     public void Approve()
     {
-        var publicApi = ApiGenerator.GeneratePublicApi(typeof(SpringBuilder).Assembly);
+        var publicApi = ApiGenerator.GeneratePublicApi(typeof(SpringInternalType).Assembly);
         Approver.Verify(publicApi);
     }
 }

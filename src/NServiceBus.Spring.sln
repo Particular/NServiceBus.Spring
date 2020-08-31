@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30406.217
 MinimumVisualStudioVersion = 15.0.26430.12
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NServiceBus.Spring", "NServiceBus.Spring\NServiceBus.Spring.csproj", "{734D30CF-4376-488A-A6B4-1033FED93660}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NServiceBus.Spring.AcceptanceTests", "NServiceBus.Spring.AcceptanceTests\NServiceBus.Spring.AcceptanceTests.csproj", "{0D0BB553-A7F5-4818-904C-327379B01023}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NServiceBus.Spring.Tests", "NServiceBus.Spring.Tests\NServiceBus.Spring.Tests.csproj", "{BA7E959D-D85D-4C9D-9D66-F39A33F516AD}"
 EndProject
@@ -25,10 +23,6 @@ Global
 		{734D30CF-4376-488A-A6B4-1033FED93660}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{734D30CF-4376-488A-A6B4-1033FED93660}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{734D30CF-4376-488A-A6B4-1033FED93660}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0D0BB553-A7F5-4818-904C-327379B01023}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D0BB553-A7F5-4818-904C-327379B01023}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D0BB553-A7F5-4818-904C-327379B01023}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D0BB553-A7F5-4818-904C-327379B01023}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BA7E959D-D85D-4C9D-9D66-F39A33F516AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BA7E959D-D85D-4C9D-9D66-F39A33F516AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA7E959D-D85D-4C9D-9D66-F39A33F516AD}.Release|Any CPU.ActiveCfg = Release|Any CPU

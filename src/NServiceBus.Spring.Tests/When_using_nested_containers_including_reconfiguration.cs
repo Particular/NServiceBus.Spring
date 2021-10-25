@@ -9,7 +9,7 @@
     public class When_using_nested_containers_including_reconfiguration
     {
         [Test]
-        public void it_just_works()
+        public void It_just_works()
         {
             ConventionalBusDependency.DisposeCalled = 0;
             ConventionalBusDependency.InstanceCounter = 0;
@@ -94,8 +94,9 @@
                 conventionalBusDependency = dependency;
             }
 
-            // ReSharper disable once NotAccessedField.Local
+#pragma warning disable IDE0052 // Remove unread private members
             readonly ConventionalBusDependency conventionalBusDependency;
+#pragma warning restore IDE0052 // Remove unread private members
         }
     }
 }

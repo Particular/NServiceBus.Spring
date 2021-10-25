@@ -18,9 +18,7 @@ namespace NServiceBus
         /// <returns>The new container wrapper.</returns>
         public override IContainer CreateContainer(ReadOnlySettings settings)
         {
-            ContextHolder contextHolder;
-
-            if (settings.TryGet(out contextHolder))
+            if (settings.TryGet(out ContextHolder contextHolder))
             {
                 settings.AddStartupDiagnosticsSection("NServiceBus.Spring", new
                 {

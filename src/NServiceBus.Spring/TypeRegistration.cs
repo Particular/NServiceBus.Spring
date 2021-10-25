@@ -14,10 +14,8 @@ namespace NServiceBus.ObjectBuilder.Spring
             this.dependencyLifecycle = dependencyLifecycle;
         }
 
-        public override bool ApplicableForChildContainer
-        {
-            get { throw new InvalidOperationException("TypeRegistration ApplicableForChildContainer should never be called. The decision should is done in the TypeRegistrationDecorator"); }
-        }
+        public override bool ApplicableForChildContainer =>
+            throw new InvalidOperationException("TypeRegistration ApplicableForChildContainer should never be called. The decision should is done in the TypeRegistrationDecorator");
 
         public override void Register(GenericApplicationContext context)
         {

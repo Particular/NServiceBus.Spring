@@ -137,6 +137,7 @@
 
         bool IsRootContainer => !isChildContainer;
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Fody.Janitor")]
         void DisposeManaged()
         {
             if (!owned)

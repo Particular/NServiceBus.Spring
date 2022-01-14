@@ -4,14 +4,17 @@
 [assembly: System.Runtime.Versioning.TargetFrameworkAttribute(".NETFramework,Version=v4.5.2", FrameworkDisplayName=".NET Framework 4.5.2")]
 namespace NServiceBus
 {
+    [System.ObsoleteAttribute(@"Support for external dependency injection containers is no longer provided by NServiceBus adapters for each container library. Instead, the NServiceBus.Extensions.DependencyInjection library provides the ability to use any container that conforms to the Microsoft.Extensions.DependencyInjection container abstraction. Will be treated as an error from version 9.0.0. Will be removed in version 10.0.0.", false)]
     public class SpringBuilder : NServiceBus.Container.ContainerDefinition
     {
         public SpringBuilder() { }
         public override NServiceBus.ObjectBuilder.Common.IContainer CreateContainer(NServiceBus.Settings.ReadOnlySettings settings) { }
     }
+    [System.ObsoleteAttribute(@"Support for external dependency injection containers is no longer provided by NServiceBus adapters for each container library. Instead, the NServiceBus.Extensions.DependencyInjection library provides the ability to use any container that conforms to the Microsoft.Extensions.DependencyInjection container abstraction. Will be treated as an error from version 9.0.0. Will be removed in version 10.0.0.", false)]
     public class static SpringExtensions
     {
         [System.CLSCompliantAttribute(false)]
+        [System.ObsoleteAttribute(@"Support for external dependency injection containers is no longer provided by NServiceBus adapters for each container library. Instead, the NServiceBus.Extensions.DependencyInjection library provides the ability to use any container that conforms to the Microsoft.Extensions.DependencyInjection container abstraction. Will be treated as an error from version 9.0.0. Will be removed in version 10.0.0.", false)]
         public static void ExistingApplicationContext(this NServiceBus.Container.ContainerCustomizations customizations, Spring.Context.Support.GenericApplicationContext applicationContext) { }
     }
 }

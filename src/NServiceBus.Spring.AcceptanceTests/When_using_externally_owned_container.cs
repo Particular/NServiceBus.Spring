@@ -34,8 +34,9 @@
                     var genericContext = new SpecialGenericApplicationContext();
 
                     config.SendFailedMessagesTo("error");
+#pragma warning disable 618
                     config.UseContainer<SpringBuilder>(c => c.ExistingApplicationContext(genericContext));
-
+#pragma warning restore 618
                     var context = (Context)desc.ScenarioContext;
                     context.ApplicationContext = genericContext;
                 });
